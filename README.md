@@ -1,2 +1,2 @@
 # Qiu-Si
-File quick viewing software (graduation design)
+Graduation Design(In the making...)

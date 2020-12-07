@@ -1,2 +1,2 @@
 # Qiu-Si
-Graduation Design(In the making...)
+Quick read - only preview of file

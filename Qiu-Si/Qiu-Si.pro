@@ -10,14 +10,23 @@ CONFIG += c++11
 
 SOURCES += \
     DialogWidget/aboutdia.cpp \
+    DialogWidget/tinctselect.cpp \
+    ValueStore.cpp \
+    dynamicprogressbar.cpp \
     main.cpp \
     DialogWidget/optionsdia.cpp \
-    qiusi.cpp
+    qiusi.cpp \
+    qiusisplashscreen.cpp
 
 HEADERS += \
     DialogWidget/aboutdia.h \
     DialogWidget/optionsdia.h \
-    qiusi.h
+    DialogWidget/tinctselect.h \
+    JsonKeyword.h \
+    ValueStore.h \
+    dynamicprogressbar.h \
+    qiusi.h \
+    qiusisplashscreen.h
 
 FORMS += \
     qiusi.ui

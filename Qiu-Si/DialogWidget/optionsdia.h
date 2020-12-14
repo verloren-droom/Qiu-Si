@@ -6,11 +6,21 @@
 #include <QCheckBox>
 #include <QSpinBox>
 #include <QLabel>
-#include <QHBoxLayout>
-#include <QVBoxLayout>
 #include <QColorDialog>
 #include <QPushButton>
 #include <QLineEdit>
+#include <QGridLayout>
+#include <QFile>
+#include <QJsonObject>
+#include <QJsonParseError>
+#include <QFileDialog>
+#include <QMessageBox>
+#include <QJsonArray>
+#include <QString>
+
+#include "tinctselect.h"
+#include "JsonKeyword.h"
+#include "ValueStore.h"
 
 #include <QDebug>
 
@@ -35,20 +45,32 @@ public:
     void SaveSetting();
     void CancelSetting();
 
+    // 读取配置文件
+    void ReadSetting();
+
+    // 配置文件关键字
+//    void ConfigKeyword();
+
 private:
-    QGroupBox *textGroup, *themeGroup, *viewGroup;
-
-//    QCheckBox *cb_setting;
+    // Text Group
+    QGroupBox *textGroup;
+    QLabel *lbl_fontSize, *lbl_fontColor;
     QSpinBox *sb_fontSize;
+    TinctSelect *fontTinctSelect;
 
-    QLabel *lbl_fontSize, *lbl_fontColor, *lbl_WindowColor;
+    // Theme Group
+    QGroupBox *themeGroup;
+    TinctSelect *bgTinctSelect;
+    QLabel *lbl_WindowColor;
+    TinctSelect *themeTinctSelect;
+
+    // View Group
+    QGroupBox *viewGroup;
+
+    QString path, themeColorStr, fontColorStr;
+    QStringList fontConfig, themeConfig;
 
     QPushButton *btn_ok, *btn_cancel;
-
-    QLineEdit *le_windowColor, *le_fontColor;
-
-    int fontSize;
-
 signals:
 
 };

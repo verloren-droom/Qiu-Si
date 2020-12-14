@@ -15,10 +15,16 @@
 #include <QFileDialog>
 #include <QShortcut>
 #include <QFile>
+#include <QFileInfo>
 #include <QTextStream>
+#include <QPixmap>
+#include <QTimer>
+#include <QPointer>
+#include <QProgressBar>
 
 #include "DialogWidget/aboutdia.h"
 #include "DialogWidget/optionsdia.h"
+#include "ValueStore.h"
 
 #include <QDebug>
 
@@ -43,6 +49,8 @@ public:
     // initialize the number bar
     void InitNumBar();
 
+//    void paintEvent(QEvent *ev);
+
     // unified font
     QFont UnifiedFont();
     // unified icon
@@ -51,6 +59,8 @@ public:
     // file menu function
     void OpenFile();
     void GetFile();
+    void OpenTxtFile(QFile *txt);
+    void OpenImageFile(QString filePath);
 
 
     // Tool menu function
@@ -69,6 +79,7 @@ private:
 
     // content
     QTextEdit *txt_content;
+    QLabel *mainContent;
 
     // declaration main menubar
     QMenuBar *mainMenu;
@@ -79,6 +90,8 @@ private:
     QMenu *fileMenu, *editMenu;
     QAction *openAction, *quitAction;
     QShortcut *sc_quit, *sc_open;
+    QString path;
+    QStringList suffixList;
 
     // declaration tool menu
     QMenu *toolsMenu;
@@ -90,10 +103,6 @@ private:
     QMenu *helpMenu;
     QAction *aboutAction;
     AboutDia *aboutDia;
-
-
-    // file path
-    QString path;
 
     int totalLine;
 

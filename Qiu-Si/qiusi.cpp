@@ -22,10 +22,10 @@ void QiuSi::InitUi()
     InitBar();
 
     // 设置中心控件
-    txt_content = new QTextEdit(this);
-    setCentralWidget(txt_content);
+    mainContent = new QLabel(this);
+    setCentralWidget(mainContent);
 
-    txt_content->setReadOnly(true);
+//    mainContent->setReadOnly(true);
 
     setWindowFlag(Qt::X11BypassWindowManagerHint);
 }
@@ -75,8 +75,13 @@ void QiuSi::InitNumBar()
     numBar->setFloatable(false);
     numBar->setMovable(false);
     numBar->setOrientation(Qt::Vertical);
-//    numBar->resize(20, txt_content->height());
+//    numBar->resize(20, mainContent->height());
 }
+
+//void QiuSi::paintEvent(QEvent *ev)
+//{
+
+//}
 
 // 打开文件
 void QiuSi::OpenFile()
@@ -99,16 +104,69 @@ void QiuSi::OpenFile()
 // 获得文件
 void QiuSi::GetFile()
 {
+    // 文件后缀
+    suffixList << "txt" << "png" << "jpg";
+
     // 获取打开文件路径
-    path = QFileDialog::getOpenFileName(this, "Open File...", "C:/");
-    QFile openFile(path);
-    openFile.open(QIODevice::ReadOnly);
-    QString txt = openFile.readAll();
-    QTextStream in(&txt);
-    txt_content->setText(txt);
+    path = QFileDialog::getOpenFileName(this, "Open File...", "C:/", "TXT Files(*.txt);;Image Files(*.png *.jpg)");
+    setWindowTitle(path);
+//    FilterFile(path);
 
     // 获取打开文本行数
-    totalLine = txt_content->document()->lineCount();
+//    totalLine = mainContent->document()->lineCount();
+    QFile file(path);
+    QFileInfo currentFileInfo(file);
+    QString fileSuffix {currentFileInfo.suffix()};
+
+    // 筛选文件类型
+    switch (suffixList.indexOf(fileSuffix))
+    {
+    case 0:
+        OpenTxtFile(&file);
+        break;
+    case 1:
+            OpenImageFile(path);
+        break;
+    }
+
+    file.close();
+}
+
+// 打开文本类型设置
+void QiuSi::OpenTxtFile(QFile *txt)
+{
+    txt->open(QIODevice::ReadOnly);
+    uchar* fPtr = txt->map(0, txt->size());
+    if (fPtr)
+    {
+//        QTimer *openTimer = new QTimer(this);
+//        openTimer->start(100);
+//        connect(openTimer, &QTimer::timeout, [=]{
+//            while(!txt->atEnd())
+//            {
+//                QString txtStr;
+//                txtStr = txt->readLine();
+//            }
+//        });
+        QCoreApplication::processEvents();
+        txt->unmap(fPtr);
+        repaint();
+    }
+    QString txtStr = txt->readAll();
+    mainContent->setText(txtStr);
+
+    // 设置文本鼠标光标可选择，并在右上显示
+    mainContent->setTextInteractionFlags(Qt::TextSelectableByMouse);
+    mainContent->setAlignment(Qt::AlignLeft | Qt::AlignTop);
+
+    txt->close();
+}
+
+// 打开图片类型设置
+void QiuSi::OpenImageFile(QString filePath)
+{
+    QImage img(filePath);
+    mainContent->setPixmap(QPixmap::fromImage(img)/*.scaled(mainContent->size())*/);
 }
 
 // 退出程序
@@ -147,10 +205,10 @@ void QiuSi::AddFontSize()
 
 void QiuSi::AddSize()
 {
-    static int currentSize = txt_content->font().pointSize() + 1;
+    static int currentSize = mainContent->font().pointSize() + 1;
     QFont font;
     font.setPointSize(currentSize++);
-    txt_content->setFont(font);
+    mainContent->setFont(font);
 }
 
 void QiuSi::SubFontSize()
@@ -171,10 +229,10 @@ void QiuSi::SubFontSize()
 
 void QiuSi::SubSize()
 {
-    static int currentSize = txt_content->font().pointSize() - 1;
+    static int currentSize = mainContent->font().pointSize() - 1;
     QFont font;
     font.setPointSize(currentSize--);
-    txt_content->setFont(font);
+    mainContent->setFont(font);
 }
 
 void QiuSi::OptionsApp()

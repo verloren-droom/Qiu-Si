@@ -9,24 +9,24 @@ CONFIG += c++11
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    DialogWidget/aboutdia.cpp \
-    DialogWidget/tinctselect.cpp \
-    ValueStore.cpp \
-    dynamicprogressbar.cpp \
-    main.cpp \
-    DialogWidget/optionsdia.cpp \
-    qiusi.cpp \
-    qiusisplashscreen.cpp
+    help/aboutdia.cpp \
+    options/tinctselect.cpp \
+    options/optionsdia.cpp \
+    resources/ValueStore.cpp \
+    resources/dynamicprogressbar.cpp \
+    resources/qiusisplashscreen.cpp \
+    bin/qiusi.cpp \
+    main.cpp
 
 HEADERS += \
-    DialogWidget/aboutdia.h \
-    DialogWidget/optionsdia.h \
-    DialogWidget/tinctselect.h \
-    JsonKeyword.h \
-    ValueStore.h \
-    dynamicprogressbar.h \
-    qiusi.h \
-    qiusisplashscreen.h
+    help/aboutdia.h \
+    options/optionsdia.h \
+    options/tinctselect.h \
+    resources/JsonKeyword.h \
+    resources/ValueStore.h \
+    resources/dynamicprogressbar.h \
+    resources/qiusisplashscreen.h \
+    bin/qiusi.h
 
 FORMS += \
     qiusi.ui

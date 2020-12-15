@@ -8,5 +8,7 @@
     </qresource>
     <qresource prefix="/img">
         <file>images/startImg.svg</file>
+        <file>images/maple.png</file>
+        <file>images/maple_leaf.png</file>
     </qresource>
 </RCC>

@@ -12,6 +12,7 @@
 #include <QDialog>
 #include <QFont>
 #include <QLabel>
+#include <QScrollArea>
 #include <QFileDialog>
 #include <QShortcut>
 #include <QFile>
@@ -23,6 +24,11 @@
 #include <QPointer>
 #include <QProgressBar>
 #include <QMetaEnum>
+#include <QMouseEvent>
+#include <QHBoxLayout>
+#include <QMediaPlayer>
+#include <QMediaPlayerControl>
+#include <QMediaPlaylist>
 
 #include "help/aboutdia.h"
 #include "options/optionsdia.h"
@@ -52,49 +58,69 @@ public:
 
 //    void paintEvent(QEvent *ev);
 
-    // unified font
-    QFont UnifiedFont();
-    // unified icon
-    QIcon UnifiedIcon();
+    // QiuSi font
+    QFont QiusiFont();
+    // QiusSi icon
+    QIcon QiusiIcon();
+    // QiuSi Color
+    QPalette QiusPalette();
 
     // file menu function
     void OpenFile();
-    void GetFile();
+    void OpenNewWindow();
+    void NewWindow();
+    bool GetFile();
     void OpenTxtFile(QFile *txt);
     void OpenImageFile(QString filePath);
+    void OpenMusicFile(QString filePath);
+    void MusicPlayMode();
 
 
     // Tool menu function
     void changeFontSize();
     void AddSize();
     void SubSize();
+    void DisplaySize();
+    void HiddenSize();
     void OptionsApp();
 
     // help menu function
     void QuitApp();
     void AboutApp();
 
+    // event
+    void mousePressEvent(QMouseEvent *ev);
+    void mouseMoveEvent(QMouseEvent *ev);
+
 private:
     Ui::QiuSi *ui;
 
     // content
-    QTextEdit *txt_content;
     QLabel *mainContent;
+    QScrollArea *sa_content;
 
     // declaration main menubar
     QMenuBar *mainMenu;
 
     // declaration file menu
     QMenu *fileMenu, *editMenu;
-    QAction *openAction, *quitAction;
-    QShortcut *sc_quit, *sc_open;
+    QAction *openAction, *openNewAction, *quitAction;
+    QiuSi *newQiusi;
+    QShortcut *sc_open, *sc_openNew, *sc_quit;
     QString path;
     QStringList suffixList;
+
+    // music play mode
+    QPushButton *btn_musicPlay;
+    QPushButton *btn_musicPause;
+    QMediaPlayer *musicPlay;
+    QMediaPlaylist *musicPlayList;
 
     // declaration tool menu
     QMenu *toolsMenu;
     QAction *addSizeAction, *subSizeAction, *optionsAction;
     OptionsDia *optionDia;
+    QLabel *lbl_displaySize;
     QShortcut *sc_add, *sc_sub;
 //    ValueStore *valueStore;
 
@@ -104,6 +130,7 @@ private:
     AboutDia *aboutDia;
 
     int totalLine;
+    QPoint dPos;
 
 };
 

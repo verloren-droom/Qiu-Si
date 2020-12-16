@@ -28,7 +28,6 @@ void TinctSelect::InitUi(QString title)
         colorStr = "#" + QString::number(qRgb(tinct.red(), tinct.green(), tinct.blue()), 16).mid(2, 8);
         btn_color->setStyleSheet(QString("background-color: %1").arg(colorStr));
         inputEdit->setText(colorStr);
-        ValueStore::changeFontColor(colorStr);
     });
 
     connect(inputEdit, &QLineEdit::textEdited, btn_color, [=](QString str){

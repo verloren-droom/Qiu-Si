@@ -2,6 +2,11 @@
     <qresource prefix="/icon">
         <file>images/icon/maple.png</file>
         <file>images/icon/pigment.png</file>
+        <file>images/icon/settings.png</file>
+        <file>images/icon/add.png</file>
+        <file>images/icon/remove.png</file>
+        <file>images/icon/about.png</file>
+        <file>images/icon/play.png</file>
     </qresource>
     <qresource prefix="/ResFile">
         <file>config/setting.json</file>
@@ -10,5 +15,9 @@
         <file>images/startImg.svg</file>
         <file>images/maple.png</file>
         <file>images/maple_leaf.png</file>
+        <file>images/startImg.png</file>
+    </qresource>
+    <qresource prefix="/source">
+        <file>resources/voice/Aimer-ONE.mp3</file>
     </qresource>
 </RCC>

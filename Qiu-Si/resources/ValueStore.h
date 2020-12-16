@@ -7,6 +7,7 @@
 // 存储设置对话框中的值
 struct ValueStore
 {
+    ValueStore();
     static int fontSize;
     static QString fontColor;
     static bool fontBold;

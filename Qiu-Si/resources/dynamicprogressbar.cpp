@@ -5,10 +5,10 @@ DynamicProgressBar::DynamicProgressBar(const QString &fileName, QWidget *parent)
     loadImg(fileName)
 {
     setRange(0, 100);
-    setValue(20);
+    setValue(100);
     setTextVisible(false);
     setFixedSize(360, 15);
-
+    setAttribute(Qt::WA_TranslucentBackground);
 //    onValueChanged(value());
 }
 
@@ -25,7 +25,7 @@ void DynamicProgressBar::onValueChanged(int value)
                "border-radius: 6px; }"
                "QProgressBar::chunk:enabled {"
                "border-radius: 4px; "
-               "background: qlineargradient(x1:0, y1:0, x2:1, y2:0";
+               "background: qlineargradient(x1:0, y1:0, x2:0, y2:0";
 
 //    double EndColor = static_cast<double>(maximum()) / maximum();    //获取比例
 

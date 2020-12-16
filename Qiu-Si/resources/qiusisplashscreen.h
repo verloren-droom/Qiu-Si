@@ -12,12 +12,12 @@ class QiuSiSplashScreen : public QSplashScreen
 {
     Q_OBJECT
 public:
-    explicit QiuSiSplashScreen(QPixmap &pix);
-    ~QiuSiSplashScreen();
+    explicit QiuSiSplashScreen(const QString &imgPath = nullptr, bool displayBar = false);
+    void ShowProgressBar(const QString &path);
 private:
     DynamicProgressBar *dynamicBar;
-public slots:
-    void UpdateProgressBar();
+//public slots:
+//    void UpdateProgressBar();
 
 signals:
 

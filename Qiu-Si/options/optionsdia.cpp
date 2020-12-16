@@ -47,6 +47,7 @@ void OptionsDia::SaveSetting()
         ValueStore::changeFontSize(sb_fontSize->value());
         ValueStore::changeFontBold(cb_Blod->isChecked());
         ValueStore::changeFontItalic(cb_Italic->isChecked());
+        ValueStore::changeFontColor(fontTinctSelect->colorStr);
         close();
     });
 }

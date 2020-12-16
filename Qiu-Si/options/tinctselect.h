@@ -19,12 +19,12 @@ public:
     explicit TinctSelect(QWidget *parent = nullptr, QString title = "Select Color...");
 
     void InitUi(QString title);
+    QString colorStr;
 
 private:
     QLineEdit *inputEdit;
     QPushButton *btn_color;
     QHBoxLayout *lay;
-    QString colorStr;
 signals:
 
 };

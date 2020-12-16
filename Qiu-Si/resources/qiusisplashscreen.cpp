@@ -1,20 +1,17 @@
 #include "qiusisplashscreen.h"
 
-QiuSiSplashScreen::QiuSiSplashScreen(QPixmap &pix)
-    : QSplashScreen(pix)
-    , dynamicBar(new DynamicProgressBar)
+QiuSiSplashScreen::QiuSiSplashScreen(const QString &imgPath, bool displayBar)
+    : QSplashScreen(QPixmap(imgPath))
 {
-//    QPixmap img_2(":/images/maple_leaf.png");
+    if (displayBar)
+        ShowProgressBar(imgPath);
+
 }
 
-QiuSiSplashScreen::~QiuSiSplashScreen()
+void QiuSiSplashScreen::ShowProgressBar(const QString &path)
 {
-    delete  dynamicBar;
+    dynamicBar = new DynamicProgressBar(path, this);
+    dynamicBar->move((width() - dynamicBar->width()) / 2, (height()- dynamicBar->height()) / 2);
+    dynamicBar->show();
 }
 
-void QiuSiSplashScreen::UpdateProgressBar()
-{
-    static int num{0};
-    dynamicBar->setValue(num);
-    num++;
-}

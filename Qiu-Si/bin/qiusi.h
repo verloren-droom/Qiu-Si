@@ -26,14 +26,13 @@
 #include <QMetaEnum>
 #include <QMouseEvent>
 #include <QHBoxLayout>
-#include <QMediaPlayer>
-#include <QMediaPlayerControl>
-#include <QMediaPlaylist>
+#include <QIcon>
 
 #include "help/aboutdia.h"
 #include "options/optionsdia.h"
 #include "resources/ValueStore.h"
 #include "resources/dynamicprogressbar.h"
+#include "options/qiusivideomode.h"
 
 #include <QDebug>
 
@@ -48,13 +47,6 @@ class QiuSi : public QMainWindow
 public:
     QiuSi(QWidget *parent = nullptr);
     ~QiuSi();
-
-    // initialize the UI
-    void InitUi();
-    void InitSet();
-
-    // initialize the menubar
-    void InitBar(bool display = true);
 
 //    void paintEvent(QEvent *ev);
 
@@ -71,17 +63,16 @@ public:
     void NewWindow();
     bool GetFile();
     void OpenTxtFile(QFile *txt);
-    void OpenImageFile(QString filePath);
-    void OpenMusicFile(QString filePath);
-    void MusicPlayMode();
-
+    void OpenImageFile(const QString &filePath = nullptr);
+    void OpenMusicFile(const QString &filePath = nullptr);
 
     // Tool menu function
     void changeFontSize();
     void AddSize();
     void SubSize();
-    void DisplaySize();
-    void HiddenSize();
+    void DisplaySizePrompt();
+    void HiddenSizePrompt();
+    void VideoMode();
     void OptionsApp();
 
     // help menu function
@@ -95,6 +86,11 @@ public:
 private:
     Ui::QiuSi *ui;
 
+    // Initialize function
+    void InitUi();
+    void InitSet();
+    void InitBar(bool display = true);
+
     // content
     QLabel *mainContent;
     QScrollArea *sa_content;
@@ -105,23 +101,24 @@ private:
     // declaration file menu
     QMenu *fileMenu, *editMenu;
     QAction *openAction, *openNewAction, *quitAction;
+    QIcon *icon_open, *icon_openNew, *icon_quit;
     QiuSi *newQiusi;
     QShortcut *sc_open, *sc_openNew, *sc_quit;
     QString path;
     QStringList suffixList;
 
     // music play mode
-    QPushButton *btn_musicPlay;
-    QPushButton *btn_musicPause;
     QMediaPlayer *musicPlay;
     QMediaPlaylist *musicPlayList;
+    QiuSiVideoMode *videoMode;
 
     // declaration tool menu
     QMenu *toolsMenu;
-    QAction *addSizeAction, *subSizeAction, *optionsAction;
+    QAction *addSizeAction, *subSizeAction, *videoModeAction, *optionsAction;
+    QIcon *icon_add, *icon_sub, *icon_video, *icon_option;
     OptionsDia *optionDia;
     QLabel *lbl_displaySize;
-    QShortcut *sc_add, *sc_sub;
+    QShortcut *sc_add, *sc_sub, *sc_music, *sc_option;
 //    ValueStore *valueStore;
 
     // declaration help menu

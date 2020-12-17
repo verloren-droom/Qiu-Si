@@ -25,7 +25,7 @@ void QiuSi::InitUi()
     InitBar();
 //    setStyleSheet("color: #c02c38");
 
-    // 设置中心控件
+    // Central widget Settings
     sa_content = new QScrollArea(this);
     mainContent = new QLabel(sa_content);
     setCentralWidget(sa_content);
@@ -35,11 +35,17 @@ void QiuSi::InitUi()
     sa_content->ensureWidgetVisible(mainContent, 5, 5);
     sa_content->setLayout(lay);
 
+    this->setStyleSheet(QString("QMenu::item:selected{"
+                          "color: #c02c38;}"
+                          "QMenu::item:hover{"
+                          "color: #c02c38;}"));
+
 //    mainContent->setReadOnly(true);
 
     setWindowFlag(Qt::X11BypassWindowManagerHint);
 }
 
+// Initialization Settings function
 void QiuSi::InitSet()
 {
     QFont font = mainContent->font();
@@ -53,34 +59,37 @@ void QiuSi::InitSet()
     mainContent->setFont(font);
 }
 
+// Initialize the bar function
 void QiuSi::InitBar(bool display)
 {
-    // 菜单栏
-    if (display)
-    {
-        mainMenu = menuBar();
-        setMenuBar(mainMenu);
+    if (!display)
+        return;
 
-        // 文件菜单
-        fileMenu = mainMenu->addMenu("File");
-        OpenFile();
-        OpenNewWindow();
-        QuitApp();
+    // The menu bar
+    mainMenu = menuBar();
+    setMenuBar(mainMenu);
 
-        // 工具菜单
-        toolsMenu = mainMenu->addMenu("Tools");
-        changeFontSize();
-        OptionsApp();
+    // The file menu
+    fileMenu = mainMenu->addMenu("File");
+    OpenFile();
+    OpenNewWindow();
+    QuitApp();
 
-        // 帮助菜单
-        helpMenu = mainMenu->addMenu("Help");
-        AboutApp();
-    }
+    // The tools menu
+    toolsMenu = mainMenu->addMenu("Tools");
+    changeFontSize();
+    VideoMode();
+    OptionsApp();
+
+    // The help menu
+    helpMenu = mainMenu->addMenu("Help");
+    AboutApp();
 
     setContextMenuPolicy(Qt::ActionsContextMenu);
 //    setWindowFlags(Qt::CustomizeWindowHint);
 }
 
+// QiuSi default font
 QFont QiuSi::QiusiFont()
 {
     QFont font;
@@ -89,6 +98,7 @@ QFont QiuSi::QiusiFont()
     return font;
 }
 
+// QiuSi default paltette
 QPalette QiuSi::QiusPalette()
 {
     QPalette palette;
@@ -101,16 +111,20 @@ QPalette QiuSi::QiusPalette()
 
 //}
 
-// 打开文件
+// Open file function
 void QiuSi::OpenFile()
 {
+    icon_open = new QIcon(":icon/images/icon/Open_64x64.png");
+    icon_open->addPixmap(QPixmap(":icon/images/icon/Open_64x64.png"), QIcon::Active, QIcon::On);
+    icon_open->addPixmap(QPixmap(":icon/images/icon/Open_64x64_click.png"), QIcon::Active, QIcon::Off);
     openAction = fileMenu->addAction("Open File...");
+    openAction->setIcon(*icon_open);
 
     connect(openAction, &QAction::triggered, [=]{
         GetFile();
     });
 
-    // 设置打开文件快捷键
+    // Set the open file shortcut key
     openAction->setShortcutContext(Qt::WidgetShortcut);
     openAction->setShortcut(QKeySequence::Open);
     sc_open = new QShortcut(QKeySequence::Open, this);
@@ -119,15 +133,20 @@ void QiuSi::OpenFile()
     });
 }
 
+// Open new window function
 void QiuSi::OpenNewWindow()
 {
-    // 打开新的窗口
-    openNewAction = fileMenu->addAction("Open New...");
+    icon_openNew = new QIcon(":icon/images/icon/Add_64x64.png");
+    icon_openNew->addPixmap(QPixmap(":icon/images/icon/Add_64x64.png"), QIcon::Active, QIcon::On);
+    icon_openNew->addPixmap(QPixmap(":icon/images/icon/Add_64x64_click.png"), QIcon::Active, QIcon::Off);
+    openNewAction = fileMenu->addAction(QIcon(":icon/images/icon/Add_64x64.png"), "Open New...");
+    openNewAction->setIcon(*icon_openNew);
 
     connect(openNewAction, &QAction::triggered, [=]{
         NewWindow();
     });
 
+    // Set the shortcut key to open a new window
     openNewAction->setShortcutContext(Qt::WidgetShortcut);
     openNewAction->setShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_O);
     sc_openNew = new QShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_O, this);
@@ -137,19 +156,30 @@ void QiuSi::OpenNewWindow()
 
 }
 
-// 获得文件
+// New window function
+void QiuSi::NewWindow()
+{
+    newQiusi = new QiuSi;
+    if (!newQiusi->GetFile())
+        return;
+    newQiusi->show();
+    newQiusi->setAttribute(Qt::WA_DeleteOnClose);
+}
+
+// Get file function
 bool QiuSi::GetFile()
 {
-    // 文件后缀
+//    openAction->setIcon(QIcon(":/icon/images/icon/Open_64x64_click.png"));
+
+    // Defines an openable file suffix
     suffixList << "txt" << "cpp" << "h" << "png" << "jpg" << "mp3";
 
-    // 获取打开文件路径
+    // Gets the open file path
     QFileDialog fileDia(this);
     path = fileDia.getOpenFileName(this, "Open File...", "D:/", "TXT Files(*.txt);;CPP Files(*.h *.cpp);;Image Files(*.png *.jpg);;Media File(*.mp3)");
     setWindowTitle(path);
 //    FilterFile(path);
 
-    // 获取打开文本行数
 //    totalLine = mainContent->document()->lineCount();
 
     QFile file(path);
@@ -159,7 +189,7 @@ bool QiuSi::GetFile()
     QString fileSuffix {currentFileInfo.suffix()};
     file.close();
 
-    // 筛选文件类型
+    // Filter file type
     switch (suffixList.indexOf(fileSuffix))
     {
     case 0:case 1:case 2:
@@ -179,10 +209,10 @@ bool QiuSi::GetFile()
     return true;
 }
 
-// 打开文本类型设置
+// Turn on the text type Settings function
 void QiuSi::OpenTxtFile(QFile *txt)
 {
-    // 设置文本鼠标光标可选择，并在右上显示
+    // Set text mouse cursor to be selected, and display on top right
     mainContent->setTextInteractionFlags(Qt::TextSelectableByMouse);
     mainContent->setAlignment(Qt::AlignLeft | Qt::AlignTop);
     sa_content->setMinimumSize(mainContent->size());
@@ -209,8 +239,8 @@ void QiuSi::OpenTxtFile(QFile *txt)
     txt->close();
 }
 
-// 打开图片类型设置
-void QiuSi::OpenImageFile(QString filePath)
+// Open the image type Settings function
+void QiuSi::OpenImageFile(const QString &filePath)
 {
     setWindowTitle(filePath + " - Picture Viewer");
     QImage img(filePath);
@@ -221,54 +251,30 @@ void QiuSi::OpenImageFile(QString filePath)
 //    sa_content->setMinimumSize(mainContent->size() - QSize(10, 10));
 }
 
-void QiuSi::OpenMusicFile(QString filePath)
+// Open the music Play mode window function
+void QiuSi::OpenMusicFile(const QString &filePath)
 {
-    musicPlay = new QMediaPlayer(this);
-    musicPlayList = new QMediaPlaylist(this);
-
-    musicPlayList->setPlaybackMode(QMediaPlaylist::Loop);
-    musicPlayList->addMedia(QUrl::fromLocalFile(filePath));
-
-    musicPlay->setPlaylist(musicPlayList);
-    MusicPlayMode();
+    videoMode = new QiuSiVideoMode(filePath, this);
+    mainContent->setHidden(true);
+    setCentralWidget(videoMode);
+    videoMode->show();
 }
 
-void QiuSi::MusicPlayMode()
-{
-    btn_musicPlay = new QPushButton(this);
-    btn_musicPlay->setGeometry((this->width() - 100) / 2, this->height() - 50, 40, 40);
-    btn_musicPlay->setIcon(QIcon(":icon/images/icon/play.png"));
-//    btn_musicPlay->resize(50, 50);
-    btn_musicPause = new QPushButton("Pause", this);
-//    btn_musicPause->resize(50, 50);
-    btn_musicPause->setGeometry((this->width() + 100) / 2, this->height() - 50, 40, 40);
-    btn_musicPlay->show();
-    btn_musicPause->show();
-
-    connect(btn_musicPlay, &QPushButton::clicked, [=]{musicPlay->play();});
-    connect(btn_musicPause, &QPushButton::clicked, [=]{musicPlay->pause();});
-}
-
-void QiuSi::NewWindow()
-{
-    newQiusi = new QiuSi;
-    if (newQiusi->GetFile())
-    {
-        newQiusi->show();
-        newQiusi->setAttribute(Qt::WA_DeleteOnClose);
-    }
-}
-
-// 退出程序
+// Exit the program function
 void QiuSi::QuitApp()
 {
-    quitAction = fileMenu->addAction("Quit");
+    icon_quit = new QIcon(":icon/images/icon/Exit_64x64.png");
+    icon_quit->addPixmap(QPixmap(":icon/images/icon/Exit_64x64.png"), QIcon::Active, QIcon::On);
+    icon_quit->addPixmap(QPixmap(":icon/images/icon/Exit_64x64_click.png"), QIcon::Active, QIcon::Off);
+
+    quitAction = fileMenu->addAction(QIcon(":icon/images/icon/Exit_64x64.png"), "Quit");
+    quitAction->setIcon(*icon_quit);
 
     connect(quitAction, &QAction::triggered, [=]{
         close();
     });
 
-    // 设置退出快捷键
+    // Set the exit shortcut key
     sc_quit = new QShortcut(Qt::CTRL + Qt::Key_Q, this);
     quitAction->setShortcutContext(Qt::WidgetShortcut);
     quitAction->setShortcut(Qt::CTRL + Qt::Key_Q);
@@ -277,42 +283,53 @@ void QiuSi::QuitApp()
     });
 }
 
+// Change font size function
 void QiuSi::changeFontSize()
 {   
-    addSizeAction = toolsMenu->addAction(QIcon(":icon/images/icon/add.png"), "Add");
-    connect(addSizeAction, &QAction::triggered, [=]{
-        DisplaySize();
-        AddSize();
+    icon_add = new QIcon(":icon/images/icon/Plus_64x64.png");
+    icon_add->addPixmap(QPixmap(":icon/images/icon/Plus_64x64.png"), QIcon::Active, QIcon::On);
+    icon_add->addPixmap(QPixmap(":icon/images/icon/Plus_64x64_click.png"), QIcon::Active, QIcon::Off);
 
+    addSizeAction = toolsMenu->addAction(QIcon(":icon/images/icon/Plus_64x64.png"), "Add");
+    addSizeAction->setIcon(*icon_add);
+
+    connect(addSizeAction, &QAction::triggered, [=]{
+        AddSize();
+        DisplaySizePrompt();
     });
 
-    // 设置字体加大快捷键
-    QKeySequence ks_add("Ctrl+=");
-    sc_add = new QShortcut(ks_add, this);
+    // Set font size to increase the shortcut key
+    sc_add = new QShortcut(QKeySequence("Ctrl+="), this);
     addSizeAction->setShortcut(QKeySequence("+"));
     connect(sc_add, &QShortcut::activated, [=]{
-        DisplaySize();
         AddSize();
+        DisplaySizePrompt();
     });
 
-    subSizeAction = toolsMenu->addAction(QIcon(":/icon/images/icon/remove.png"), "Sub");
+    icon_sub = new QIcon(":icon/images/icon/Minus_64x64.png");
+    icon_sub->addPixmap(QPixmap(":icon/images/icon/Minus_64x64.png"), QIcon::Active, QIcon::On);
+    icon_sub->addPixmap(QPixmap(":icon/images/icon/Minus_64x64_click.png"), QIcon::Active, QIcon::Off);
+
+    subSizeAction = toolsMenu->addAction(QIcon(":icon/images/icon/Minus_64x64.png"), "Sub");
+    subSizeAction->setIcon(*icon_sub);
+
     connect(subSizeAction, &QAction::triggered, [=]{
         SubSize();
-        DisplaySize();
+        DisplaySizePrompt();
     });
 
-    // 设置字体减小快捷键
-    QKeySequence ks_sub("Ctrl+-");
-    sc_sub = new QShortcut(ks_sub, this);
+    // Set the font reduction shortcut key
+    sc_sub = new QShortcut(QKeySequence("Ctrl+-"), this);
     subSizeAction->setShortcut(QKeySequence("-"));
     connect(sc_sub, &QShortcut::activated, [=]{
         SubSize();
-        DisplaySize();
+        DisplaySizePrompt();
     });
 
     ValueStore::changeFontSize(ValueStore::fontSize);
 }
 
+// Add font size function
 void QiuSi::AddSize()
 {
     QFont font;
@@ -320,6 +337,7 @@ void QiuSi::AddSize()
     mainContent->setFont(font);
 }
 
+// Reduce font size
 void QiuSi::SubSize()
 {
     QFont font;
@@ -327,10 +345,11 @@ void QiuSi::SubSize()
     mainContent->setFont(font);
 }
 
-void QiuSi::DisplaySize()
+// Displays font size prompts
+void QiuSi::DisplaySizePrompt()
 {
     lbl_displaySize = new QLabel(this);
-    lbl_displaySize->setGeometry(width() - 100, 40, 100, 20);
+    lbl_displaySize->setGeometry(width() - 120, 60, 100, 20);
     lbl_displaySize->setFont(QiusiFont());
     lbl_displaySize->setStyleSheet("background-color: #e2e1e4");
     lbl_displaySize->raise();
@@ -340,32 +359,72 @@ void QiuSi::DisplaySize()
     QElapsedTimer *t = new QElapsedTimer;
     t->start();
     while (t->elapsed() < 1000)
-        HiddenSize();
+        HiddenSizePrompt();
 }
 
-void QiuSi::HiddenSize()
+// Hidden font size prompts
+void QiuSi::HiddenSizePrompt()
 {
     lbl_displaySize->setVisible(false);
     lbl_displaySize->setText("");
 }
 
+// Switch audio playback mode
+void QiuSi::VideoMode()
+{
+    icon_video = new QIcon(":icon/images/icon/Note_64x64.png");
+    icon_video->addPixmap(QPixmap(":icon/images/icon/Note_64x64.png"), QIcon::Active, QIcon::On);
+    icon_video->addPixmap(QPixmap(":icon/images/icon/Note_64x64_click.png"), QIcon::Active, QIcon::Off);
+
+    videoModeAction = toolsMenu->addAction(QIcon(":icon/images/icon/Note_64x64.png"), "Video Model");
+    videoModeAction->setIcon(*icon_video);
+
+    connect(videoModeAction, &QAction::triggered, [=]{
+        OpenMusicFile();
+    });
+
+    // Set the shortcut key to switch audio playback mode
+    videoModeAction->setShortcutContext(Qt::WidgetShortcut);
+    sc_music = new QShortcut(Qt::CTRL + Qt::Key_M, this);
+    videoModeAction->setShortcut(Qt::CTRL + Qt::Key_M);
+    connect(sc_music, &QShortcut::activated, [=]{
+        OpenMusicFile();
+    });
+}
+
+// Open setup function
 void QiuSi::OptionsApp()
 {
-    optionsAction = toolsMenu->addAction(QIcon(":icon/images/icon/settings.png"), "Options...");
+    icon_option = new QIcon(":icon/images/icon/Settings_64x64.png");
+    icon_option->addPixmap(QPixmap(":icon/images/icon/Settings_64x64.png"), QIcon::Active, QIcon::On);
+    icon_option->addPixmap(QPixmap(":icon/images/icon/Settings_64x64_click.png"), QIcon::Active, QIcon::Off);
+
+    optionsAction = toolsMenu->addAction(QIcon(":icon/images/icon/Settings_64x64.png"), "Options...");
+    optionsAction->setIcon(*icon_option);
 
     optionDia = new OptionsDia;
     optionDia->setWindowIcon(QiusiIcon());
 
-    // 连接打开设置对话框
+    // Connect to open the Settings dialog
     connect(optionsAction, &QAction::triggered, [=]{
         optionDia->open();
 
-        // 阻塞代码
+        // Block of code
+        optionDia->exec();
+    });
+
+    sc_option = new QShortcut(Qt::CTRL + Qt::Key_P, this);
+    optionsAction->setShortcutContext(Qt::WidgetShortcut);
+    optionsAction->setShortcut(Qt::CTRL + Qt::Key_P);
+    connect(sc_option, &QShortcut::activated, [=]{
+        optionDia->open();
+
+        // Block of code
         optionDia->exec();
     });
 }
 
-// 关于程序
+// About the program dialog
 void QiuSi::AboutApp()
 {
     aboutAction = helpMenu->addAction(QIcon(":icon/images/icon/about.png"), "About Qiu-Si...");
@@ -373,25 +432,24 @@ void QiuSi::AboutApp()
     aboutDia = new AboutDia;
     aboutDia->setWindowIcon(QiusiIcon());
 
-    // 连接打开关于窗口
+    // Connect to open about window
     connect(aboutAction, &QAction::triggered, [=]{
-//            QMessageBox::about(this, "Qiu-Si", "");
         aboutDia->open();
 
-        // 阻塞代码
+        // Block of code
         aboutDia->exec();
     });
 }
 
 void QiuSi::mousePressEvent(QMouseEvent *ev)
 {
-    // 移动后部件所在的位置
+    // The position of the component after it has been moved
     this->dPos = ev->globalPos() - this->pos();
 }
 
 void QiuSi::mouseMoveEvent(QMouseEvent *ev)
 {
-    // 移动位置
+    // Mobile location
     move(ev->globalPos() - this->dPos);
 }
 

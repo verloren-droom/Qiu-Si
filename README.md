@@ -1,3 +1,4 @@
 # Qiu-Si
 Quick read - only preview of file
-</br>Pure C++ code
+</br>
+<font>Add what function you think of, please correct it</font>

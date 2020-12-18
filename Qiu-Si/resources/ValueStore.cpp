@@ -1,5 +1,12 @@
 #include "ValueStore.h"
 
+Q_GLOBAL_STATIC(ValueStore, valueStore)
+
+ValueStore *ValueStore::instance()
+{
+    return valueStore();
+}
+
 int ValueStore::fontSize{9};
 QString ValueStore::fontColor{"#000000"};
 bool ValueStore::fontBold{false};

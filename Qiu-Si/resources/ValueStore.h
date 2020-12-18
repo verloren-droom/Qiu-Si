@@ -3,11 +3,12 @@
 
 #include <QString>
 #include <QColor>
+#include <QGlobalStatic>
 
 // 存储设置对话框中的值
 struct ValueStore
 {
-    ValueStore();
+    static ValueStore *instance();
     static int fontSize;
     static QString fontColor;
     static bool fontBold;

@@ -2,6 +2,7 @@
 #define QIUSIVIDEOMODE_H
 
 #include <QWidget>
+#include <QMessageBox>
 #include <QMediaPlayer>
 #include <QPushButton>
 #include <QMediaPlaylist>
@@ -18,7 +19,7 @@ public:
     void VideoPlayingFunc(QString path);
 
     QString SetBtnStyle();
-
+    void SetVideoPath(const QString &path);
 private:
     void Init();
 
@@ -26,6 +27,8 @@ private:
 
     QMediaPlayer *musicPlayer;
     QMediaPlaylist *musicPlaylist;
+
+    QString videoPath;
 
 signals:
 

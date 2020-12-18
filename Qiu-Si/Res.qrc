@@ -34,7 +34,5 @@
         <file>images/maple.png</file>
         <file>images/maple_leaf.png</file>
     </qresource>
-    <qresource prefix="/source">
-        <file>resources/voice/Aimer-ONE.mp3</file>
-    </qresource>
+    <qresource prefix="/source"/>
 </RCC>

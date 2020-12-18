@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <QLineEdit>
+#include <QLabel>
 #include <QColorDialog>
 #include <QPushButton>
 #include <QHBoxLayout>
@@ -20,9 +21,11 @@ public:
 
     void InitUi(QString title);
     QString colorStr;
+    void setColorStr(QString color);
 
 private:
     QLineEdit *inputEdit;
+    QLabel *lbl_title;
     QPushButton *btn_color;
     QHBoxLayout *lay;
 signals:

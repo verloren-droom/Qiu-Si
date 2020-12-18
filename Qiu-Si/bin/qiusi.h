@@ -10,7 +10,6 @@
 #include <QToolBar>
 #include <QAction>
 #include <QDialog>
-#include <QFont>
 #include <QLabel>
 #include <QScrollArea>
 #include <QFileDialog>
@@ -33,6 +32,8 @@
 #include "resources/ValueStore.h"
 #include "resources/dynamicprogressbar.h"
 #include "options/qiusivideomode.h"
+
+#include "test/globaltest.h"
 
 #include <QDebug>
 
@@ -64,6 +65,7 @@ public:
     bool GetFile();
     void OpenTxtFile(QFile *txt);
     void OpenImageFile(const QString &filePath = nullptr);
+    bool ShowVideoUi(bool isShow = false);
     void OpenMusicFile(const QString &filePath = nullptr);
 
     // Tool menu function
@@ -72,7 +74,7 @@ public:
     void SubSize();
     void DisplaySizePrompt();
     void HiddenSizePrompt();
-    void VideoMode();
+    void VideoMode(const QString &path = nullptr);
     void OptionsApp();
 
     // help menu function
@@ -82,12 +84,14 @@ public:
     // event
     void mousePressEvent(QMouseEvent *ev);
     void mouseMoveEvent(QMouseEvent *ev);
-
+public slots:
+//    void receiveSaveValue();
 private:
     Ui::QiuSi *ui;
 
     // Initialize function
     void InitUi();
+    void InitMainContent();
     void InitSet();
     void InitBar(bool display = true);
 
@@ -128,7 +132,8 @@ private:
 
     int totalLine;
     QPoint dPos;
-
+signals:
+    void changeSizeSignal();
 };
 
 #endif // QIUSI_H

@@ -4,7 +4,6 @@
 #include <QDialog>
 #include <QGroupBox>
 #include <QCheckBox>
-#include <QSpinBox>
 #include <QLabel>
 #include <QColorDialog>
 #include <QPushButton>
@@ -21,6 +20,7 @@
 #include <QTabWidget>
 
 #include "tinctselect.h"
+#include "qiusispinbox.h"
 #include "resources/JsonKeyword.h"
 #include "resources/ValueStore.h"
 
@@ -32,6 +32,10 @@ class OptionsDia : public QDialog
 public:
     explicit OptionsDia(QWidget *parent = nullptr);
 
+    // 配置文件关键字
+//    void ConfigKeyword();
+
+private: 
     void InitUi();
 
     // textedit setting
@@ -50,16 +54,12 @@ public:
     // 读取配置文件
     void ReadSetting();
 
-    // 配置文件关键字
-//    void ConfigKeyword();
 
-private:
     QTabWidget *optionsTab;
     // Text Group
     QGroupBox *textGroup;
     QPushButton *btn_text;
-    QLabel *lbl_fontSize, *lbl_fontColor;
-    QSpinBox *sb_fontSize;
+    QiusiSpinBox *qs_fontSize;
     TinctSelect *fontTinctSelect;
     QCheckBox *cb_Blod, *cb_Italic;
 
@@ -67,7 +67,6 @@ private:
     QGroupBox *themeGroup;
     QPushButton *btn_theme;
     TinctSelect *bgTinctSelect;
-    QLabel *lbl_WindowColor;
     TinctSelect *themeTinctSelect;
 
     // View Group
@@ -77,8 +76,14 @@ private:
     QStringList fontConfig, themeConfig;
 
     QPushButton *btn_ok, *btn_cancel;
-signals:
 
+public slots:
+    void setCurrentValue();
+    void setSaveValue();
+    void fontSizeChange();
+
+signals:
+    void saveValue();
 };
 
 #endif // OPTIONSDIA_H

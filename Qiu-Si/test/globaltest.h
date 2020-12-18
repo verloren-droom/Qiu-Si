@@ -3,11 +3,20 @@
 
 extern int x;
 
+#include <QGlobalStatic>
+#include <QDebug>
+#define GLOBALTEST globalTest::instance()
+
 class globalTest
 {
+private:
 public:
-    globalTest();
+    globalTest(){}
 
+    static globalTest* instance();
+
+    int x;
+    void test();
 
 };
 

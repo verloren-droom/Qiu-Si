@@ -3,9 +3,10 @@
 OptionsDia::OptionsDia(QWidget *parent) : QDialog(parent)
 {
     InitUi();
+    setCurrentValue();
 }
 
-// 初始化界面
+// Initialization interface function
 void OptionsDia::InitUi()
 {
     setFixedSize(400, 300);
@@ -21,7 +22,7 @@ void OptionsDia::InitUi()
 //    ViewSetting();
 //    ReadSetting();
 
-    // 将确定和取消按钮放在右下角
+    // Place the OK and Cancel buttons in the lower right corner
     QHBoxLayout *lay_select = new QHBoxLayout(this);
     btn_ok = new QPushButton("OK", this);
     btn_ok->resize(120, 60);
@@ -30,7 +31,7 @@ void OptionsDia::InitUi()
     lay_select->addWidget(btn_ok);
     lay_select->addWidget(btn_cancel);
 
-    // 设置取消键为默认关联回车键
+    // Sets the cancel key to the default associated carriage Enter key
     btn_cancel->setFocus();
     btn_cancel->setDefault(true);
 
@@ -40,55 +41,68 @@ void OptionsDia::InitUi()
     CancelSetting();
 }
 
-// 保存设置
+// Save the setting function
 void OptionsDia::SaveSetting()
 {
-    connect(btn_ok, &QPushButton::clicked, [=]{
-        ValueStore::changeFontSize(sb_fontSize->value());
-        ValueStore::changeFontBold(cb_Blod->isChecked());
-        ValueStore::changeFontItalic(cb_Italic->isChecked());
-        ValueStore::changeFontColor(fontTinctSelect->colorStr);
-        close();
-    });
+    connect(btn_ok, &QPushButton::clicked, this, &OptionsDia::setSaveValue);
 }
 
-// 取消设置
+// Save the Settings slot function
+void OptionsDia::setSaveValue()
+{
+    ValueStore::instance()->changeFontSize(qs_fontSize->sb_number->value());
+    ValueStore::instance()->changeFontBold(cb_Blod->isChecked());
+    ValueStore::instance()->changeFontItalic(cb_Italic->isChecked());
+    ValueStore::instance()->changeFontColor(fontTinctSelect->colorStr);
+    emit saveValue();
+    close();
+}
+
+// Font size change function
+void OptionsDia::fontSizeChange()
+{
+    qs_fontSize->sb_number->setValue(ValueStore::instance()->fontSize);
+}
+
+// Cancel the setup function
 void OptionsDia::CancelSetting()
 {
-    connect(btn_cancel, &QPushButton::clicked, [=]{
-        close();
-    });
+    connect(btn_cancel, &QPushButton::clicked, this, &OptionsDia::setCurrentValue);
 }
 
-// 字体设置
+// Save the original slot function
+void OptionsDia::setCurrentValue()
+{
+    qs_fontSize->sb_number->setValue(ValueStore::instance()->fontSize);
+    cb_Blod->setChecked(ValueStore::instance()->fontBold);
+    cb_Blod->setChecked(ValueStore::instance()->fontItalic);
+    fontTinctSelect->setColorStr(ValueStore::instance()->fontColor);
+    close();
+}
+
+// font the setting function
 void OptionsDia::TextEditSetting()
 {
-//    btn_text = new QPushButton(this);
     optionsTab->setTabText(0, "Text Edit");
+
     // 初始化字体分组，并设置大小
     textGroup = new QGroupBox("Text Edit", this);
-//    textGroup->resize(width() - 10, height() / 3 - 10);
     optionsTab->addTab(textGroup, "Text Edit");
 
     // 初始化字体设置大小，并设置大小
-    lbl_fontSize = new QLabel("Font Size: ", this);
-    sb_fontSize = new QSpinBox(this);
-    sb_fontSize->setValue(ValueStore::fontSize);
+    qs_fontSize = new QiusiSpinBox("Font Size", this);
 
     // 初始化字体颜色设置
-    lbl_fontColor = new QLabel("Font Color: ", this);
-    fontTinctSelect = new TinctSelect(this, "Font Color...");
+    fontTinctSelect = new TinctSelect(this, "Font Color");
 
     // 初始化字体粗体和斜体
     cb_Blod = new QCheckBox("Blod", this);
     cb_Italic = new QCheckBox("Italic", this);
 
-    // 将所有设置放入格子布局中
+    // Place all font Settings in the grid layout
     QGridLayout *lay_font = new QGridLayout;
-    lay_font->addWidget(lbl_fontSize, 0, 0, Qt::AlignLeft | Qt::AlignTop);
-    lay_font->addWidget(sb_fontSize, 0, 1, Qt::AlignLeft | Qt::AlignTop);
-    lay_font->addWidget(lbl_fontColor, 0, 2, Qt::AlignLeft | Qt::AlignTop);
-    lay_font->addWidget(fontTinctSelect, 0, 3, Qt::AlignLeft | Qt::AlignTop);
+    lay_font->addWidget(qs_fontSize, 0, 0, Qt::AlignLeft | Qt::AlignTop);
+    lay_font->addWidget(fontTinctSelect, 0, 1, Qt::AlignLeft | Qt::AlignTop);
     lay_font->addWidget(cb_Blod, 1, 0, Qt::AlignLeft | Qt::AlignTop);
     lay_font->addWidget(cb_Italic, 1, 1, Qt::AlignLeft | Qt::AlignTop);
 
@@ -101,7 +115,7 @@ void OptionsDia::TextEditSetting()
     textGroup->setLayout(lay_font);
 }
 
-// 主题设置
+// Theme Settings function
 void OptionsDia::ThemeSetting()
 {
     optionsTab->setTabText(1, "Theme");
@@ -111,19 +125,16 @@ void OptionsDia::ThemeSetting()
     optionsTab->addTab(themeGroup, "Theme");
 
     // 初始化主题颜色设置，并设置大小
-    lbl_WindowColor = new QLabel("Theme Color: ", this);
-    themeTinctSelect = new TinctSelect(this, "Theme Color...");
+    themeTinctSelect = new TinctSelect(this, "Theme Color");
 
     // 将主题颜色设置放在一个水平布局
     QGridLayout *lay_theme = new QGridLayout;
-    lay_theme->addWidget(lbl_WindowColor, 0, 0, Qt::AlignLeft);
     lay_theme->addWidget(themeTinctSelect, 0, 1, Qt::AlignLeft);
 
     // 格子布局设置
     lay_theme->setHorizontalSpacing(10);
     lay_theme->setVerticalSpacing(30);
     lay_theme->setContentsMargins(10, 10, 10, 10);
-
 
     // 将主题颜色设置添加到主题分组中
     themeGroup->setLayout(lay_theme);

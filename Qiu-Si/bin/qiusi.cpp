@@ -26,16 +26,9 @@ void QiuSi::InitUi()
 //    setStyleSheet("color: #c02c38");
 
     // Central widget Settings
-    sa_content = new QScrollArea(this);
-    mainContent = new QLabel(sa_content);
-    setCentralWidget(sa_content);
-    QHBoxLayout *lay = new QHBoxLayout;
-    lay->addWidget(mainContent);
-    sa_content->setWidget(mainContent);
-    sa_content->ensureWidgetVisible(mainContent, 5, 5);
-    sa_content->setLayout(lay);
+    InitMainContent();
 
-    this->setStyleSheet(QString("QMenu::item:selected{"
+    setStyleSheet(QString("QMenu::item:selected{"
                           "color: #c02c38;}"
                           "QMenu::item:hover{"
                           "color: #c02c38;}"));
@@ -45,14 +38,27 @@ void QiuSi::InitUi()
     setWindowFlag(Qt::X11BypassWindowManagerHint);
 }
 
+// Initialization MainConntent function
+void QiuSi::InitMainContent()
+{
+    sa_content = new QScrollArea(this);
+    mainContent = new QLabel(sa_content);
+    setCentralWidget(sa_content);
+    QHBoxLayout *lay = new QHBoxLayout;
+    lay->addWidget(mainContent);
+    sa_content->setWidget(mainContent);
+    sa_content->ensureWidgetVisible(mainContent, 5, 5);
+    sa_content->setLayout(lay);
+}
+
 // Initialization Settings function
 void QiuSi::InitSet()
 {
     QFont font = mainContent->font();
     QPalette fontPal = mainContent->palette();
-    font.setItalic(ValueStore::fontItalic);
-    font.setBold(ValueStore::fontBold);
-    font.setPointSize(ValueStore::fontSize);
+    font.setItalic(ValueStore::instance()->fontItalic);
+    font.setBold(ValueStore::instance()->fontBold);
+    font.setPointSize(ValueStore::instance()->fontSize);
     mainContent->setPalette(fontPal);
     mainContent->setStyleSheet(QString("color: %1;background-color: %2").arg(ValueStore::fontColor).arg(ValueStore::themeColor));
     setStyleSheet(QString("background: %1").arg(ValueStore::themeColor));
@@ -199,7 +205,8 @@ bool QiuSi::GetFile()
         OpenImageFile(path);
         break;
     case 5:
-        OpenMusicFile(path);
+        if (ShowVideoUi())
+            OpenMusicFile(path);
         break;
     default:
         QMessageBox::warning(this, "Error opening file", "Unknown file type");
@@ -251,13 +258,32 @@ void QiuSi::OpenImageFile(const QString &filePath)
 //    sa_content->setMinimumSize(mainContent->size() - QSize(10, 10));
 }
 
+bool QiuSi::ShowVideoUi(bool isShow)
+{
+    videoMode = new QiuSiVideoMode(path, this);
+    videoMode->setAttribute(Qt::WA_DeleteOnClose);
+
+    if (isShow)
+    {
+        InitMainContent();
+        mainContent->show();
+        videoMode->close();
+    }
+    else
+    {
+        setCentralWidget(videoMode);
+        mainContent->close();
+    }
+    return isShow;
+}
+
 // Open the music Play mode window function
 void QiuSi::OpenMusicFile(const QString &filePath)
 {
-    videoMode = new QiuSiVideoMode(filePath, this);
-    mainContent->setHidden(true);
-    setCentralWidget(videoMode);
-    videoMode->show();
+    qDebug() << "Errors in this";
+    if (videoMode->isEnabled())
+        return;
+    videoMode->SetVideoPath(filePath);
 }
 
 // Exit the program function
@@ -326,23 +352,25 @@ void QiuSi::changeFontSize()
         DisplaySizePrompt();
     });
 
-    ValueStore::changeFontSize(ValueStore::fontSize);
+    ValueStore::instance()->changeFontSize(ValueStore::instance()->fontSize);
 }
 
 // Add font size function
 void QiuSi::AddSize()
 {
     QFont font;
-    font.setPointSize(++ValueStore::fontSize);
+    font.setPointSize(++ValueStore::instance()->fontSize);
     mainContent->setFont(font);
+    emit changeSizeSignal();
 }
 
 // Reduce font size
 void QiuSi::SubSize()
 {
     QFont font;
-    font.setPointSize(--ValueStore::fontSize);
+    font.setPointSize(--ValueStore::instance()->fontSize);
     mainContent->setFont(font);
+    emit changeSizeSignal();
 }
 
 // Displays font size prompts
@@ -370,7 +398,7 @@ void QiuSi::HiddenSizePrompt()
 }
 
 // Switch audio playback mode
-void QiuSi::VideoMode()
+void QiuSi::VideoMode(const QString &path)
 {
     icon_video = new QIcon(":icon/images/icon/Note_64x64.png");
     icon_video->addPixmap(QPixmap(":icon/images/icon/Note_64x64.png"), QIcon::Active, QIcon::On);
@@ -379,8 +407,11 @@ void QiuSi::VideoMode()
     videoModeAction = toolsMenu->addAction(QIcon(":icon/images/icon/Note_64x64.png"), "Video Model");
     videoModeAction->setIcon(*icon_video);
 
+    videoMode = new QiuSiVideoMode(path, this);
+    videoMode->setHidden(true);
+
     connect(videoModeAction, &QAction::triggered, [=]{
-        OpenMusicFile();
+        ShowVideoUi(videoMode->isVisible());
     });
 
     // Set the shortcut key to switch audio playback mode
@@ -388,7 +419,7 @@ void QiuSi::VideoMode()
     sc_music = new QShortcut(Qt::CTRL + Qt::Key_M, this);
     videoModeAction->setShortcut(Qt::CTRL + Qt::Key_M);
     connect(sc_music, &QShortcut::activated, [=]{
-        OpenMusicFile();
+        ShowVideoUi(videoMode->isVisible());
     });
 }
 
@@ -422,6 +453,9 @@ void QiuSi::OptionsApp()
         // Block of code
         optionDia->exec();
     });
+
+    connect(optionDia, &OptionsDia::saveValue, this, &QiuSi::InitSet);
+    connect(this, &QiuSi::changeSizeSignal, optionDia, &OptionsDia::fontSizeChange);
 }
 
 // About the program dialog
@@ -456,4 +490,11 @@ void QiuSi::mouseMoveEvent(QMouseEvent *ev)
 QiuSi::~QiuSi()
 {
     delete ui;
+    delete icon_add;
+    delete icon_open;
+    delete icon_openNew;
+    delete icon_option;
+    delete icon_quit;
+    delete icon_sub;
+    delete icon_video;
 }

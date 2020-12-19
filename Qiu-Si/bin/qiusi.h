@@ -8,6 +8,7 @@
 #include <QMenuBar>
 #include <QMenu>
 #include <QToolBar>
+#include <QStatusBar>
 #include <QAction>
 #include <QDialog>
 #include <QLabel>
@@ -32,6 +33,8 @@
 #include "resources/ValueStore.h"
 #include "resources/dynamicprogressbar.h"
 #include "options/qiusivideomode.h"
+#include "options/qiusistatusinfo.h"
+#include "options/qiusivolumecontrol.h"
 
 #include "test/globaltest.h"
 
@@ -56,7 +59,7 @@ public:
     // QiusSi icon
     QIcon QiusiIcon();
     // QiuSi Color
-    QPalette QiusPalette();
+    QString QiusiTinct();
 
     // file menu function
     void OpenFile();
@@ -65,7 +68,7 @@ public:
     bool GetFile();
     void OpenTxtFile(QFile *txt);
     void OpenImageFile(const QString &filePath = nullptr);
-    bool ShowVideoUi(bool isShow = false);
+    bool ShowVideoUi(const QFileInfo &info, bool isShow = false);
     void OpenMusicFile(const QString &filePath = nullptr);
 
     // Tool menu function
@@ -115,6 +118,8 @@ private:
     QMediaPlayer *musicPlay;
     QMediaPlaylist *musicPlayList;
     QiuSiVideoMode *videoMode;
+    QiuSiStatusInfo *currentInfo;
+    QiuSiVolumeControl *volumeContrl;
 
     // declaration tool menu
     QMenu *toolsMenu;
@@ -130,6 +135,10 @@ private:
     QAction *aboutAction;
     AboutDia *aboutDia;
 
+    // status bar
+    QStatusBar *currentStatus;
+
+    QFile file;
     int totalLine;
     QPoint dPos;
 signals:

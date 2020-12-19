@@ -19,13 +19,13 @@ void DynamicProgressBar::DrawProgress()
 
 void DynamicProgressBar::onValueChanged(int value)
 {
-    QString qss= "QProgressBar{"
-               "border: 1px solid rgb(16, 135, 209);"
-               "background: rgba(248,248,255,180);"
-               "border-radius: 6px; }"
-               "QProgressBar::chunk:enabled {"
-               "border-radius: 4px; "
-               "background: qlineargradient(x1:0, y1:0, x2:0, y2:0";
+    QString qss = "QProgressBar{"
+                  "border: 1px solid rgb(16, 135, 209);"
+                  "background: rgba(248,248,255,180);"
+                  "border-radius: 6px; }"
+                  "QProgressBar::chunk:enabled {"
+                  "border-radius: 4px; "
+                  "background: qlineargradient(x1:0, y1:0, x2:0, y2:0";
 
 //    double EndColor = static_cast<double>(maximum()) / maximum();    //获取比例
 
@@ -54,13 +54,13 @@ void DynamicProgressBar::paintEvent(QPaintEvent *e)
         QPainter painter(this);
         QRect rect1 = style()->subElementRect(QStyle::SE_ProgressBarContents, &opt, this);
         //QRectF rect1=this->rect();
-        double _width=static_cast<double>(value())/static_cast<double>(value())*rect1.width();
+        double _width = static_cast<double>(value())/static_cast<double>(value())*rect1.width();
         QLinearGradient gradient(0,0,_width,rect1.height());
-        gradient.setColorAt(0,Qt::red);
-        gradient.setColorAt(1,Qt::blue);
+        gradient.setColorAt(0, Qt::red);
+        gradient.setColorAt(1, Qt::blue);
         painter.setBrush(gradient);
-        QRectF rect2=QRectF(rect1.topLeft(),QSize(static_cast<int>(_width),static_cast<int>(rect1.height())));
-        rect2.adjust(0,0.8,0,-2);
+        QRectF rect2 = QRectF(rect1.topLeft(), QSize(static_cast<int>(_width),static_cast<int>(rect1.height())));
+        rect2.adjust(0, 0.8, 0, -2);
         painter.drawRoundedRect(rect2, 10, 10);
         //painter.drawRect(rect);
     }

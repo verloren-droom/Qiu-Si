@@ -26,6 +26,18 @@
         <file>images/icon/Minus_64x64_click.png</file>
         <file>images/icon/Plus_64x64.png</file>
         <file>images/icon/Plus_64x64_click.png</file>
+        <file>images/icon/maple_1024x1024.png</file>
+        <file>images/icon/maple_1024x1024_click.png</file>
+        <file>images/icon/Louder_512.png</file>
+        <file>images/icon/Quieter_512.png</file>
+        <file>images/icon/TurnOff_512.png</file>
+        <file>images/icon/Quieter_48.png</file>
+        <file>images/icon/Quieter_32.png</file>
+        <file>images/icon/Quieter_16.png</file>
+        <file>images/icon/music_64.png</file>
+        <file>images/icon/Play_256_click.png</file>
+        <file>images/icon/Backward_256_click.png</file>
+        <file>images/icon/Forward_256_click.png</file>
     </qresource>
     <qresource prefix="/ResFile">
         <file>config/setting.json</file>

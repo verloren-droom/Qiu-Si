@@ -91,6 +91,9 @@ void QiuSi::InitBar(bool display)
     helpMenu = mainMenu->addMenu("Help");
     AboutApp();
 
+    currentStatus = statusBar();
+    currentStatus->setSizeGripEnabled(false);
+
     setContextMenuPolicy(Qt::ActionsContextMenu);
 //    setWindowFlags(Qt::CustomizeWindowHint);
 }
@@ -105,11 +108,9 @@ QFont QiuSi::QiusiFont()
 }
 
 // QiuSi default paltette
-QPalette QiuSi::QiusPalette()
+QString QiuSi::QiusiTinct()
 {
-    QPalette palette;
-    palette.setColor(QPalette::WindowText, QColor(192, 44, 56));
-    return palette;
+    return QString("#c02c38");
 }
 
 //void QiuSi::paintEvent(QEvent *ev)
@@ -188,7 +189,8 @@ bool QiuSi::GetFile()
 
 //    totalLine = mainContent->document()->lineCount();
 
-    QFile file(path);
+//    QFile file(path);
+    file.setFileName(path);
     if (!file.open(QIODevice::ReadOnly))
         return false;
     QFileInfo currentFileInfo(file);
@@ -205,7 +207,7 @@ bool QiuSi::GetFile()
         OpenImageFile(path);
         break;
     case 5:
-        if (ShowVideoUi())
+        if (ShowVideoUi(currentFileInfo, false))
             OpenMusicFile(path);
         break;
     default:
@@ -258,21 +260,30 @@ void QiuSi::OpenImageFile(const QString &filePath)
 //    sa_content->setMinimumSize(mainContent->size() - QSize(10, 10));
 }
 
-bool QiuSi::ShowVideoUi(bool isShow)
+bool QiuSi::ShowVideoUi(const QFileInfo &info, bool isShow)
 {
-    videoMode = new QiuSiVideoMode(path, this);
-    videoMode->setAttribute(Qt::WA_DeleteOnClose);
+    if (videoMode == Q_NULLPTR)
+        videoMode = new QiuSiVideoMode(QiusiTinct(), path, this);
 
     if (isShow)
     {
-        InitMainContent();
-        mainContent->show();
+        currentStatus->removeWidget(videoMode);
+        currentStatus->removeWidget(currentInfo);
         videoMode->close();
+        currentInfo->close();
+        volumeContrl->close();
     }
     else
     {
-        setCentralWidget(videoMode);
-        mainContent->close();
+        currentStatus->setFixedHeight(80);
+        videoMode->show();
+        currentInfo = new QiuSiStatusInfo(info.baseName(), ":icon/images/icon/music_64.png", this);
+        currentInfo->show();
+        volumeContrl = new QiuSiVolumeControl(QiusiTinct(), this);
+        volumeContrl->show();
+        currentStatus->addWidget(currentInfo);
+        currentStatus->addWidget(videoMode);
+        currentStatus->addWidget(volumeContrl);
     }
     return isShow;
 }
@@ -280,8 +291,7 @@ bool QiuSi::ShowVideoUi(bool isShow)
 // Open the music Play mode window function
 void QiuSi::OpenMusicFile(const QString &filePath)
 {
-    qDebug() << "Errors in this";
-    if (videoMode->isEnabled())
+    if (videoMode->isVisible())
         return;
     videoMode->SetVideoPath(filePath);
 }
@@ -407,11 +417,11 @@ void QiuSi::VideoMode(const QString &path)
     videoModeAction = toolsMenu->addAction(QIcon(":icon/images/icon/Note_64x64.png"), "Video Model");
     videoModeAction->setIcon(*icon_video);
 
-    videoMode = new QiuSiVideoMode(path, this);
+    videoMode = new QiuSiVideoMode(QiusiTinct(), path, this);
     videoMode->setHidden(true);
 
     connect(videoModeAction, &QAction::triggered, [=]{
-        ShowVideoUi(videoMode->isVisible());
+        ShowVideoUi(file, videoMode->isVisible());
     });
 
     // Set the shortcut key to switch audio playback mode
@@ -419,7 +429,7 @@ void QiuSi::VideoMode(const QString &path)
     sc_music = new QShortcut(Qt::CTRL + Qt::Key_M, this);
     videoModeAction->setShortcut(Qt::CTRL + Qt::Key_M);
     connect(sc_music, &QShortcut::activated, [=]{
-        ShowVideoUi(videoMode->isVisible());
+        ShowVideoUi(file, videoMode->isVisible());
     });
 }
 
@@ -478,13 +488,15 @@ void QiuSi::AboutApp()
 void QiuSi::mousePressEvent(QMouseEvent *ev)
 {
     // The position of the component after it has been moved
-    this->dPos = ev->globalPos() - this->pos();
+    if (ev->button() == Qt::LeftButton)
+        this->dPos = ev->globalPos() - this->pos();
 }
 
 void QiuSi::mouseMoveEvent(QMouseEvent *ev)
 {
     // Mobile location
-    move(ev->globalPos() - this->dPos);
+    if (ev->buttons() == Qt::LeftButton)
+        move(ev->globalPos() - this->dPos);
 }
 
 QiuSi::~QiuSi()

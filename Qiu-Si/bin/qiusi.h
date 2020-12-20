@@ -33,7 +33,6 @@
 #include "resources/ValueStore.h"
 #include "resources/dynamicprogressbar.h"
 #include "options/qiusivideomode.h"
-#include "options/qiusistatusinfo.h"
 #include "options/qiusivolumecontrol.h"
 
 #include "test/globaltest.h"
@@ -68,7 +67,7 @@ public:
     bool GetFile();
     void OpenTxtFile(QFile *txt);
     void OpenImageFile(const QString &filePath = nullptr);
-    bool ShowVideoUi(const QFileInfo &info, bool isShow = false);
+    bool ShowVideoUi(QFile *media, bool isShow = false);
     void OpenMusicFile(const QString &filePath = nullptr);
 
     // Tool menu function
@@ -77,7 +76,7 @@ public:
     void SubSize();
     void DisplaySizePrompt();
     void HiddenSizePrompt();
-    void VideoMode(const QString &path = nullptr);
+    void StartVideoMode();
     void OptionsApp();
 
     // help menu function
@@ -115,11 +114,7 @@ private:
     QStringList suffixList;
 
     // music play mode
-    QMediaPlayer *musicPlay;
-    QMediaPlaylist *musicPlayList;
     QiuSiVideoMode *videoMode;
-    QiuSiStatusInfo *currentInfo;
-    QiuSiVolumeControl *volumeContrl;
 
     // declaration tool menu
     QMenu *toolsMenu;

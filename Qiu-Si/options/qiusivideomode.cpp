@@ -1,126 +1,53 @@
 #include "qiusivideomode.h"
 
-QiuSiVideoMode::QiuSiVideoMode(const QString &color, const QString &path, QWidget *parent)
+QiuSiVideoMode::QiuSiVideoMode(QWidget *parent, const QString &path, const QString &color)
     : QWidget(parent)
-    , videoPath(path)
+    , mediaPath(path)
 {
-    InitUi(color);
+    QFileInfo info(mediaPath);
+    QString title(info.baseName());
+    if (title.isEmpty())
+        title = "Unknown music";
+    qs_media = new QiuSiMedia(this);
+    mediaInfo = new QiuSiStatusInfo(title, ":icon/images/icon/music_64.png", this);
+    qs_mediaBtn = new QiuSiMediaButton(this);
+    qs_slider = new QiuSiSlider(color, this);
+    qs_volume = new QiuSiVolumeControl(color, this);
+    qs_media->InputMediaPath(mediaPath);
+
+    mediaInfo->show();
+    qs_mediaBtn->show();
+
+
+    if (mediaPath.isEmpty())
+        qs_slider->setEnabled(false);
+//    qs_slider->setFixedWidth(400);
+    MediaWidgetLayout();
 }
 
-// Initialize the UI function
-void QiuSiVideoMode::InitUi(QString color)
+void QiuSiVideoMode::MediaWidgetLayout()
 {
+    qDebug() << "at this";
 
-    // Play and pause button
-    btn_play = new QPushButton(QIcon(":icon/images/icon/Play_256x256.png"), nullptr,this);
-    btn_play->setStyleSheet(SetBtnStyle() + "QPushButton:pressed{border-image: url(:icon/images/icon/Play_256_click.png);}");
+    QHBoxLayout *lay_overall = new QHBoxLayout;
+    lay_overall->addWidget(mediaInfo);
 
-    // Backword button
-    btn_backward = new QPushButton(QIcon(":icon/images/icon/Backward_378x256.png"), nullptr, this);
-    btn_backward->setStyleSheet(SetBtnStyle() + "QPushButton:pressed{border-image: url(:icon/images/icon/Backward_256_click.png);}");
+    QVBoxLayout *lay_mid = new QVBoxLayout;
+    lay_mid->addWidget(qs_mediaBtn);
+    lay_mid->addWidget(qs_slider);
+//    lay_mid->setAlignment(Qt::AlignCenter);
+    lay_mid->setContentsMargins(10, 0, 0, 10);
 
-    // Forward button
-    btn_forward = new QPushButton(QIcon(":icon/images/icon/Forward_378x256.png"), nullptr, this);
-    btn_forward->setStyleSheet(SetBtnStyle() + "QPushButton:pressed{border-image: url(:icon/images/icon/Forward_256_click.png);}");
+    lay_overall->addLayout(lay_mid);
+    lay_overall->addWidget(qs_volume);
+    lay_overall->setAlignment(Qt::AlignVCenter);
 
-    QHBoxLayout *layh_btn = new QHBoxLayout;
-    layh_btn->addWidget(btn_backward);
-    layh_btn->addWidget(btn_play);
-    layh_btn->addWidget(btn_forward);
-    layh_btn->setAlignment(Qt::AlignCenter);
-//    layh_btn->setContentsMargins(10, 10, 10, 10);
-
-    InitMusicPlay();
-    MusicPlayBtn();
-
-    qs_music = new QiuSiSlider(color, this);
-    qs_music->show();
-    if (videoPath.isNull())
-        qs_music->setEnabled(false);
-
-    QVBoxLayout *layv = new QVBoxLayout;
-    layv->addLayout(layh_btn);
-    layv->addWidget(qs_music);
-
-    setLayout(layv);
+    setLayout(lay_overall);
 }
 
-void QiuSiVideoMode::InitMusicPlay()
+QString QiuSiVideoMode::SetVideoPath(QString path)
 {
-    musicPlayer = new QMediaPlayer(this);
-    musicPlaylist = new QMediaPlaylist(this);
-    musicPlaylist->setPlaybackMode(QMediaPlaylist::Loop);
-    musicPlaylist->addMedia(QUrl::fromLocalFile(videoPath));
-
-    musicPlayer->setPlaylist(musicPlaylist);
-
+    mediaPath = path;
+    return mediaPath;
 }
 
-// Music play pause button function
-void QiuSiVideoMode::MusicPlayBtn()
-{
-    if (videoPath.isEmpty())
-        return;
-    connect(btn_play, &QPushButton::clicked, [=]{
-        switch (musicPlayer->state()) {
-        case QMediaPlayer::PlayingState:
-            musicPlayer->pause();
-            btn_play->setIcon(QIcon(":icon/images/icon/Play_256x256.png"));
-            break;
-        case QMediaPlayer::PausedState: case QMediaPlayer::StoppedState:
-            musicPlayer->play();
-            btn_play->setIcon(QIcon(":icon/images/icon/Pause_256x256.png"));
-            break;
-        }
-    });
-
-    qs_music->setRange(0, MusicTime(videoPath));
-    connect(musicPlayer, &QMediaPlayer::durationChanged, qs_music, &QiuSiSlider::setValue);
-    connect(qs_music, &QiuSiSlider::valueChanged, musicPlayer, &QMediaPlayer::setPosition);
-}
-
-// Music volume control function
-//void QiuSiVideoMode::MusicVolumeControl()
-//{
-//    qs_volume->setRange(0, 100);
-//    connect(musicPlayer, &QMediaPlayer::volumeChanged, qs_volume, &QiuSiSlider::setValue);
-//    connect(qs_volume, &QiuSiSlider::valueChanged, musicPlayer, &QMediaPlayer::setVolume);
-//}
-
-void QiuSiVideoMode::SetVideoPath(const QString &path)
-{
-    videoPath = path;
-}
-
-QString QiuSiVideoMode::SetBtnStyle()
-{
-    return "QPushButton{"
-           "background-color: white; border: 0px; border-style: outset;"
-           "}"
-           "QPushButton:hover{"
-           "background-color: white;"
-           "}"
-           "QPushButton:pressed{"
-           "border-style: inset;}";
-}
-
-qint64 QiuSiVideoMode::MusicTime(const QString &filePath)
-{
-    QFile file(filePath);
-    if (file.open(QIODevice::ReadOnly)) {
-        qint64 fileSize = file.size() / (16000.0 * 2.0);
-        file.close();
-        return fileSize;
-    }
-    return -1;
-}
-
-void QiuSiVideoMode::OnMetaDataAvailableChanged(bool available)
-{
-    if (available){
-        qint64 time = musicPlayer->metaData("Duration").toInt();
-        if (time != 0)
-//            ui->btn_original_sound->setTotalTime(time / 1000.0);
-            return;
-    }
-}

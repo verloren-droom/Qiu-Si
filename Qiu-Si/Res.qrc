@@ -38,6 +38,8 @@
         <file>images/icon/Play_256_click.png</file>
         <file>images/icon/Backward_256_click.png</file>
         <file>images/icon/Forward_256_click.png</file>
+        <file>images/icon/Louder_16.png</file>
+        <file>images/icon/TurnOff_16.png</file>
     </qresource>
     <qresource prefix="/ResFile">
         <file>config/setting.json</file>

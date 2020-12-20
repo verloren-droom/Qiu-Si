@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QLabel>
 #include <QHBoxLayout>
+#include <QMatrix>
 
 class QiuSiStatusInfo : public QWidget
 {

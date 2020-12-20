@@ -12,6 +12,8 @@ CONFIG += c++11
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    options/qiusimedia.cpp \
+    options/qiusimediabutton.cpp \
     options/qiusislider.cpp \
     options/qiusispinbox.cpp \
     options/qiusistatusinfo.cpp \
@@ -28,6 +30,8 @@ SOURCES += \
     main.cpp
 
 HEADERS += \
+    options/qiusimedia.h \
+    options/qiusimediabutton.h \
     options/qiusislider.h \
     options/qiusispinbox.h \
     options/qiusistatusinfo.h \

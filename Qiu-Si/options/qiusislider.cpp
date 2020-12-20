@@ -11,6 +11,7 @@ void QiuSiSlider::InitUi()
     setAttribute(Qt::WA_TranslucentBackground);
 
     setOrientation(Qt::Horizontal);
+
 }
 
 QString QiuSiSlider::QiusiSliderStyle(QString bgColor)

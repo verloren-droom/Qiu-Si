@@ -6,6 +6,7 @@
 #include <QHBoxLayout>
 
 #include "qiusislider.h"
+#include "qiusimedia.h"
 
 class QiuSiVolumeControl : public QWidget
 {
@@ -17,6 +18,11 @@ private:
     QLabel *lbl_volumeImage;
 
     QiuSiSlider *qs_volumeControl;
+
+    QiuSiMedia *qs_media;
+
+public slots:
+    void ChangeImage(int s);
 
 signals:
 

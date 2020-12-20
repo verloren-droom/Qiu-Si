@@ -3,16 +3,16 @@
 
 #include <QWidget>
 #include <QMessageBox>
-#include <QMediaPlayer>
-#include <QPushButton>
-#include <QMediaPlaylist>
-#include <QUrl>
+#include <QFileInfo>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QSpacerItem>
-#include <QLabel>
 
+#include "qiusimedia.h"
 #include "qiusislider.h"
+#include "qiusivolumecontrol.h"
+#include "qiusimediabutton.h"
+#include "qiusistatusinfo.h"
 
 #include <QDebug>
 
@@ -20,30 +20,20 @@ class QiuSiVideoMode : public QWidget
 {
     Q_OBJECT
 public:
-    explicit QiuSiVideoMode(const QString &color = "#000000", const QString &path = nullptr, QWidget *parent = nullptr);
+    explicit QiuSiVideoMode(QWidget *parent = nullptr, const QString &path = nullptr, const QString &color = "#000000");
 
-    void MusicPlayBtn();
+    QString SetVideoPath(QString path);
 
-//    void MusicVolumeControl();
-
-    void SetVideoPath(const QString &path);
-    QString SetBtnStyle();
-    qint64 MusicTime(const QString &filePath);
-
-public slots:
-    void OnMetaDataAvailableChanged(bool available);
 private:
-    void InitUi(QString color);
-    void InitMusicPlay();
+    void MediaWidgetLayout();
 
-    QPushButton *btn_play, *btn_forward, *btn_backward;
+    QiuSiMedia *qs_media;
+    QiuSiSlider *qs_slider;
+    QiuSiMediaButton *qs_mediaBtn;
+    QiuSiVolumeControl *qs_volume;
+    QiuSiStatusInfo *mediaInfo;
 
-    QMediaPlayer *musicPlayer;
-    QMediaPlaylist *musicPlaylist;
-    QiuSiSlider *qs_music, *qs_volume;
-
-    QString videoPath;
-
+    QString mediaPath;
 signals:
 
 };

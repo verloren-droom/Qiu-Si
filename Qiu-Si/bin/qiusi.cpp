@@ -84,7 +84,7 @@ void QiuSi::InitBar(bool display)
     // The tools menu
     toolsMenu = mainMenu->addMenu("Tools");
     changeFontSize();
-    VideoMode();
+    StartVideoMode();
     OptionsApp();
 
     // The help menu
@@ -207,7 +207,7 @@ bool QiuSi::GetFile()
         OpenImageFile(path);
         break;
     case 5:
-        if (ShowVideoUi(currentFileInfo, false))
+        if (ShowVideoUi(&file, false))
             OpenMusicFile(path);
         break;
     default:
@@ -260,30 +260,19 @@ void QiuSi::OpenImageFile(const QString &filePath)
 //    sa_content->setMinimumSize(mainContent->size() - QSize(10, 10));
 }
 
-bool QiuSi::ShowVideoUi(const QFileInfo &info, bool isShow)
+bool QiuSi::ShowVideoUi(QFile *media, bool isShow)
 {
-    if (videoMode == Q_NULLPTR)
-        videoMode = new QiuSiVideoMode(QiusiTinct(), path, this);
-
     if (isShow)
     {
         currentStatus->removeWidget(videoMode);
-        currentStatus->removeWidget(currentInfo);
         videoMode->close();
-        currentInfo->close();
-        volumeContrl->close();
     }
     else
     {
         currentStatus->setFixedHeight(80);
+        currentStatus->setContentsMargins(0, 0, 0, 0);
         videoMode->show();
-        currentInfo = new QiuSiStatusInfo(info.baseName(), ":icon/images/icon/music_64.png", this);
-        currentInfo->show();
-        volumeContrl = new QiuSiVolumeControl(QiusiTinct(), this);
-        volumeContrl->show();
-        currentStatus->addWidget(currentInfo);
         currentStatus->addWidget(videoMode);
-        currentStatus->addWidget(volumeContrl);
     }
     return isShow;
 }
@@ -291,8 +280,7 @@ bool QiuSi::ShowVideoUi(const QFileInfo &info, bool isShow)
 // Open the music Play mode window function
 void QiuSi::OpenMusicFile(const QString &filePath)
 {
-    if (videoMode->isVisible())
-        return;
+    videoMode->show();
     videoMode->SetVideoPath(filePath);
 }
 
@@ -408,7 +396,7 @@ void QiuSi::HiddenSizePrompt()
 }
 
 // Switch audio playback mode
-void QiuSi::VideoMode(const QString &path)
+void QiuSi::StartVideoMode()
 {
     icon_video = new QIcon(":icon/images/icon/Note_64x64.png");
     icon_video->addPixmap(QPixmap(":icon/images/icon/Note_64x64.png"), QIcon::Active, QIcon::On);
@@ -417,19 +405,19 @@ void QiuSi::VideoMode(const QString &path)
     videoModeAction = toolsMenu->addAction(QIcon(":icon/images/icon/Note_64x64.png"), "Video Model");
     videoModeAction->setIcon(*icon_video);
 
-    videoMode = new QiuSiVideoMode(QiusiTinct(), path, this);
-    videoMode->setHidden(true);
-
     connect(videoModeAction, &QAction::triggered, [=]{
-        ShowVideoUi(file, videoMode->isVisible());
+        ShowVideoUi(&file, videoMode->isVisible());
     });
+
+    videoMode = new QiuSiVideoMode(this, path, QiusiTinct());
+    videoMode->close();
 
     // Set the shortcut key to switch audio playback mode
     videoModeAction->setShortcutContext(Qt::WidgetShortcut);
     sc_music = new QShortcut(Qt::CTRL + Qt::Key_M, this);
     videoModeAction->setShortcut(Qt::CTRL + Qt::Key_M);
     connect(sc_music, &QShortcut::activated, [=]{
-        ShowVideoUi(file, videoMode->isVisible());
+        ShowVideoUi(&file, videoMode->isVisible());
     });
 }
 

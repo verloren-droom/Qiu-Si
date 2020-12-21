@@ -6,7 +6,6 @@ QiuSi::QiuSi(QWidget *parent)
     , ui(new Ui::QiuSi)
 //    , valueStore(new ValueStore)
 {
-
     InitUi();
     InitSet();
 }
@@ -28,10 +27,10 @@ void QiuSi::InitUi()
     // Central widget Settings
     InitMainContent();
 
-    setStyleSheet(QString("QMenu::item:selected{"
-                          "color: #c02c38;}"
-                          "QMenu::item:hover{"
-                          "color: #c02c38;}"));
+    mainMenu->setStyleSheet(QString("QMenu::item:selected{"
+                                    "color: %1;}"
+                                    "QMenu::item:hover{"
+                                    "color: %1;}").arg(QiusiTinct()));
 
 //    mainContent->setReadOnly(true);
 
@@ -43,6 +42,7 @@ void QiuSi::InitMainContent()
 {
     sa_content = new QScrollArea(this);
     mainContent = new QLabel(sa_content);
+    mainContent->setFont(QiusiFont());
     setCentralWidget(sa_content);
     QHBoxLayout *lay = new QHBoxLayout;
     lay->addWidget(mainContent);
@@ -92,7 +92,8 @@ void QiuSi::InitBar(bool display)
     AboutApp();
 
     currentStatus = statusBar();
-    currentStatus->setSizeGripEnabled(false);
+    currentStatus->setStyleSheet("QStatusBar::item{border: 0px;}");
+    currentStatus->setFixedHeight(20);
 
     setContextMenuPolicy(Qt::ActionsContextMenu);
 //    setWindowFlags(Qt::CustomizeWindowHint);
@@ -102,8 +103,18 @@ void QiuSi::InitBar(bool display)
 QFont QiuSi::QiusiFont()
 {
     QFont font;
-    font.setPointSize(14);
-    font.setBold(true);
+    int fontIndex = QFontDatabase::addApplicationFont(":font/resources/font/hurry.ttf");
+    if (fontIndex != -1)
+    {
+        QStringList list(QFontDatabase::applicationFontFamilies(fontIndex));
+        if (list.count() > 0)
+        {
+            QFont font(list[0]);
+            font.setPointSize(12);
+            font.setBold(true);
+            return font;
+        }
+    }
     return font;
 }
 
@@ -204,11 +215,10 @@ bool QiuSi::GetFile()
         OpenTxtFile(&file);
         break;
     case 3:case 4:
-        OpenImageFile(path);
+        OpenImageFile();
         break;
     case 5:
-        if (ShowVideoUi(&file, false))
-            OpenMusicFile(path);
+        OpenMusicFile();
         break;
     default:
         QMessageBox::warning(this, "Error opening file", "Unknown file type");
@@ -249,10 +259,10 @@ void QiuSi::OpenTxtFile(QFile *txt)
 }
 
 // Open the image type Settings function
-void QiuSi::OpenImageFile(const QString &filePath)
+void QiuSi::OpenImageFile()
 {
-    setWindowTitle(filePath + " - Picture Viewer");
-    QImage img(filePath);
+    setWindowTitle(path + " - Picture Viewer");
+    QImage img(path);
 
     mainContent->setAlignment(Qt::AlignCenter);
     mainContent->setPixmap(QPixmap::fromImage(img)/*.scaled(mainContent->size())*/);
@@ -260,28 +270,42 @@ void QiuSi::OpenImageFile(const QString &filePath)
 //    sa_content->setMinimumSize(mainContent->size() - QSize(10, 10));
 }
 
-bool QiuSi::ShowVideoUi(QFile *media, bool isShow)
+void QiuSi::ShowVideoUi(bool isShow)
 {
     if (isShow)
     {
         currentStatus->removeWidget(videoMode);
+        currentStatus->removeWidget(qs_info);
+        currentStatus->removeWidget(qs_volume);
+        currentStatus->setFixedHeight(20);
         videoMode->close();
+        qs_info->close();
+        qs_volume->close();
     }
     else
     {
-        currentStatus->setFixedHeight(80);
-        currentStatus->setContentsMargins(0, 0, 0, 0);
+        qs_info->show();
         videoMode->show();
+        qs_volume->show();
+        currentStatus->setFixedHeight(80);
+//        setMinimumSize(900, 675);
+        setFixedSize(900, 675);
+//        setWindowFlags(/*this->windowFlags()&~Qt::WindowMinMaxButtonsHint | Qt::WindowMinimizeButtonHint*/Qt::WindowMaximizeButtonHint);
+        currentStatus->addWidget(qs_info);
         currentStatus->addWidget(videoMode);
+        currentStatus->addPermanentWidget(qs_volume);
+        currentStatus->setContentsMargins(5, 5, 5, 5);
     }
-    return isShow;
 }
 
 // Open the music Play mode window function
-void QiuSi::OpenMusicFile(const QString &filePath)
+void QiuSi::OpenMusicFile()
 {
-    videoMode->show();
-    videoMode->SetVideoPath(filePath);
+    QFileInfo info(path);
+    ShowVideoUi(false);
+    QiuSiMedia::instance()->InputMediaPath(path);
+    videoMode->RunSliderBtn();
+    qs_info->ShowInfo(info.baseName());
 }
 
 // Exit the program function
@@ -405,20 +429,35 @@ void QiuSi::StartVideoMode()
     videoModeAction = toolsMenu->addAction(QIcon(":icon/images/icon/Note_64x64.png"), "Video Model");
     videoModeAction->setIcon(*icon_video);
 
-    connect(videoModeAction, &QAction::triggered, [=]{
-        ShowVideoUi(&file, videoMode->isVisible());
-    });
+    MusicPlayUi(path);
 
-    videoMode = new QiuSiVideoMode(this, path, QiusiTinct());
-    videoMode->close();
+    connect(videoModeAction, &QAction::triggered, [=]{
+        ShowVideoUi(videoMode->isVisible());
+    });
 
     // Set the shortcut key to switch audio playback mode
     videoModeAction->setShortcutContext(Qt::WidgetShortcut);
     sc_music = new QShortcut(Qt::CTRL + Qt::Key_M, this);
     videoModeAction->setShortcut(Qt::CTRL + Qt::Key_M);
     connect(sc_music, &QShortcut::activated, [=]{
-        ShowVideoUi(&file, videoMode->isVisible());
+        ShowVideoUi(videoMode->isVisible());
     });
+}
+
+void QiuSi::MusicPlayUi(const QString &c_path)
+{
+    QFileInfo info(c_path);
+    QString title(info.baseName());
+//    qs_media = new QiuSiMedia(this);
+    videoMode = new QiuSiVideoMode(this, QiusiTinct());
+    qs_volume = new QiuSiVolumeControl(QiusiTinct(), this);
+    if (title.isEmpty())
+        title = "UnKnown";
+    qs_info = new QiuSiStatusInfo(title, ":icon/images/icon/music_64.png", this);
+
+    qs_volume->close();
+    videoMode->close();
+    qs_info->close();
 }
 
 // Open setup function

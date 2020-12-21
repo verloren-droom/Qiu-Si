@@ -12,8 +12,11 @@ class QiuSiStatusInfo : public QWidget
 public:
     explicit QiuSiStatusInfo(const QString &title = "Unknown Songs", const QString &image = nullptr, QWidget *parent = nullptr);
 
+    void ShowInfo(const QString &title);
+
+    QLabel *lbl_fileName;
 private:
-    QLabel *lbl_image, *lbl_fileName;
+    QLabel *lbl_image;
 
 signals:
 

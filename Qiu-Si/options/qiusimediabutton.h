@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QPushButton>
 #include <QHBoxLayout>
+#include <QGridLayout>
 
 #include "qiusimedia.h"
 
@@ -18,7 +19,7 @@ public:
 private:
     QPushButton *btn_play_pause, *btn_forward, *btn_backward;
 
-    QiuSiMedia *qs_media;
+//    QiuSiMedia *qs_media;
 
     QString SetBtnStyle();
 

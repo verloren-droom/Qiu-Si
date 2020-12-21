@@ -1,53 +1,43 @@
 #include "qiusivideomode.h"
 
-QiuSiVideoMode::QiuSiVideoMode(QWidget *parent, const QString &path, const QString &color)
+QiuSiVideoMode::QiuSiVideoMode(QWidget *parent, const QString &color)
     : QWidget(parent)
-    , mediaPath(path)
 {
-    QFileInfo info(mediaPath);
-    QString title(info.baseName());
-    if (title.isEmpty())
-        title = "Unknown music";
-    qs_media = new QiuSiMedia(this);
-    mediaInfo = new QiuSiStatusInfo(title, ":icon/images/icon/music_64.png", this);
     qs_mediaBtn = new QiuSiMediaButton(this);
     qs_slider = new QiuSiSlider(color, this);
-    qs_volume = new QiuSiVolumeControl(color, this);
-    qs_media->InputMediaPath(mediaPath);
 
-    mediaInfo->show();
-    qs_mediaBtn->show();
+    setFixedSize(500, 80);
 
-
-    if (mediaPath.isEmpty())
+    if (QiuSiMedia::instance()->OutputMediaPath().isEmpty())
         qs_slider->setEnabled(false);
 //    qs_slider->setFixedWidth(400);
+
+
     MediaWidgetLayout();
 }
 
 void QiuSiVideoMode::MediaWidgetLayout()
 {
-    qDebug() << "at this";
-
-    QHBoxLayout *lay_overall = new QHBoxLayout;
-    lay_overall->addWidget(mediaInfo);
-
     QVBoxLayout *lay_mid = new QVBoxLayout;
     lay_mid->addWidget(qs_mediaBtn);
+    lay_mid->addStretch();
     lay_mid->addWidget(qs_slider);
-//    lay_mid->setAlignment(Qt::AlignCenter);
-    lay_mid->setContentsMargins(10, 0, 0, 10);
+    lay_mid->setAlignment(Qt::AlignHCenter);
+//    lay_mid->setContentsMargins(10, 0, 0, 10);
 
-    lay_overall->addLayout(lay_mid);
-    lay_overall->addWidget(qs_volume);
-    lay_overall->setAlignment(Qt::AlignVCenter);
-
-    setLayout(lay_overall);
+    setLayout(lay_mid);
 }
 
-QString QiuSiVideoMode::SetVideoPath(QString path)
+void QiuSiVideoMode::RunSliderBtn()
 {
-    mediaPath = path;
-    return mediaPath;
+    qs_slider->setEnabled(true);
+    qs_mediaBtn->MediaBtnSet();
+//    qs_slider->setRange(0, QiuSiMedia::instance()->MediaTime(QiuSiMedia::instance()->OutputMediaPath()));
+    connect(qs_slider, &QiuSiSlider::sliderMoved, QiuSiMedia::instance()->musicPlayer, &QMediaPlayer::setPosition);
+    connect(QiuSiMedia::instance()->musicPlayer, &QMediaPlayer::durationChanged, [=](int max){
+       qs_slider->setRange(0, max);
+    });
+    connect(QiuSiMedia::instance()->musicPlayer, &QMediaPlayer::positionChanged, qs_slider, &QiuSiSlider::setValue);
 }
+
 

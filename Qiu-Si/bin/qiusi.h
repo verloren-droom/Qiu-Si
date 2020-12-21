@@ -27,6 +27,8 @@
 #include <QMouseEvent>
 #include <QHBoxLayout>
 #include <QIcon>
+#include <QSpacerItem>
+#include <QFontDatabase>
 
 #include "help/aboutdia.h"
 #include "options/optionsdia.h"
@@ -34,6 +36,9 @@
 #include "resources/dynamicprogressbar.h"
 #include "options/qiusivideomode.h"
 #include "options/qiusivolumecontrol.h"
+#include "options/qiusimedia.h"
+#include "options/qiusistatusinfo.h"
+#include "options/qiusimediabutton.h"
 
 #include "test/globaltest.h"
 
@@ -66,9 +71,9 @@ public:
     void NewWindow();
     bool GetFile();
     void OpenTxtFile(QFile *txt);
-    void OpenImageFile(const QString &filePath = nullptr);
-    bool ShowVideoUi(QFile *media, bool isShow = false);
-    void OpenMusicFile(const QString &filePath = nullptr);
+    void OpenImageFile();
+    void ShowVideoUi(bool isShow = false);
+    void OpenMusicFile();
 
     // Tool menu function
     void changeFontSize();
@@ -96,6 +101,7 @@ private:
     void InitMainContent();
     void InitSet();
     void InitBar(bool display = true);
+    void MusicPlayUi(const QString &c_path = nullptr);
 
     // content
     QLabel *mainContent;
@@ -114,7 +120,10 @@ private:
     QStringList suffixList;
 
     // music play mode
+//    QiuSiMedia *qs_media;
     QiuSiVideoMode *videoMode;
+    QiuSiStatusInfo *qs_info;
+    QiuSiVolumeControl *qs_volume;
 
     // declaration tool menu
     QMenu *toolsMenu;

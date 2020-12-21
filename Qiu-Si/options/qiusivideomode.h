@@ -10,9 +10,7 @@
 
 #include "qiusimedia.h"
 #include "qiusislider.h"
-#include "qiusivolumecontrol.h"
 #include "qiusimediabutton.h"
-#include "qiusistatusinfo.h"
 
 #include <QDebug>
 
@@ -20,20 +18,15 @@ class QiuSiVideoMode : public QWidget
 {
     Q_OBJECT
 public:
-    explicit QiuSiVideoMode(QWidget *parent = nullptr, const QString &path = nullptr, const QString &color = "#000000");
+    explicit QiuSiVideoMode(QWidget *parent = nullptr, const QString &color = "#000000");
+    QiuSiSlider *qs_slider;
+    QiuSiMediaButton *qs_mediaBtn;
 
-    QString SetVideoPath(QString path);
+    void RunSliderBtn();
 
 private:
     void MediaWidgetLayout();
 
-    QiuSiMedia *qs_media;
-    QiuSiSlider *qs_slider;
-    QiuSiMediaButton *qs_mediaBtn;
-    QiuSiVolumeControl *qs_volume;
-    QiuSiStatusInfo *mediaInfo;
-
-    QString mediaPath;
 signals:
 
 };

@@ -3,7 +3,7 @@
 QiuSiStatusInfo::QiuSiStatusInfo(const QString &title, const QString &image, QWidget *parent)
     : QWidget(parent)
 {
-    setFixedSize(200, 85);
+    setFixedSize(170, 85);
 
     QMatrix matrix;
     matrix.rotate(10);
@@ -22,4 +22,9 @@ QiuSiStatusInfo::QiuSiStatusInfo(const QString &title, const QString &image, QWi
     lay->setContentsMargins(0, 0, 0, 20);
 
     setLayout(lay);
+}
+
+void QiuSiStatusInfo::ShowInfo(const QString &title)
+{
+    lbl_fileName->setText(title);
 }

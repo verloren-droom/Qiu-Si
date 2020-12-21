@@ -49,4 +49,7 @@
         <file>images/maple_leaf.png</file>
     </qresource>
     <qresource prefix="/source"/>
+    <qresource prefix="/font">
+        <file>resources/font/hurry.ttf</file>
+    </qresource>
 </RCC>

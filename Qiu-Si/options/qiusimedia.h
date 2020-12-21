@@ -5,15 +5,17 @@
 #include <QMediaPlaylist>
 #include <QMediaPlayer>
 #include <QFile>
+#include <QGlobalStatic>
 
 class QiuSiMedia : public QWidget
 {
     Q_OBJECT
 public:
     explicit QiuSiMedia(QWidget *parent = nullptr);
+    static QiuSiMedia *instance();
 
     void InputMediaPath(const QString &path);
-    QString mediaPath;
+    QString OutputMediaPath();
 
     QMediaPlayer *musicPlayer;
     QMediaPlaylist *musicPlaylist;
@@ -22,11 +24,12 @@ public:
 
 private:
 
+    static QString mediaPath;
     void InitMedia();
 
 
 signals:
-
+    void changePath(QString path);
 };
 
 #endif // QIUSIMEDIA_H

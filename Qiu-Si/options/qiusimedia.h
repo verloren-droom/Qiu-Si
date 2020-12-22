@@ -25,8 +25,6 @@ public:
 private:
 
     static QString mediaPath;
-    void InitMedia();
-
 
 signals:
     void changePath(QString path);

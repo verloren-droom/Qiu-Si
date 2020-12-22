@@ -30,7 +30,7 @@ void AboutDia::InitDialog()
     lbl_address->setGeometry(0, 45, width(), 30);
     lbl_address->setAlignment(Qt::AlignCenter);
     lbl_address->setFont(aboutFont);
-    lbl_address->setText("<a style='color: green;' href=\"https://github.com/verloren-droom/Qiu-Si\">GitHub源码主页");
+    lbl_address->setText("<a style='color: #c02c38;' href=\"https://github.com/verloren-droom/Qiu-Si\">GitHub源码主页");
     lbl_address->setOpenExternalLinks(true);
 
     // 作者
@@ -46,6 +46,7 @@ void AboutDia::InitDialog()
     lbl_email->setAlignment(Qt::AlignCenter);
     lbl_email->setFont(aboutFont);
     lbl_email->setText("Email: hong125841@gmail.com");
+    lbl_email->setTextInteractionFlags(Qt::TextSelectableByMouse);
 
     // 设置版本程序信息
     lbl_info = new QLabel(this);

@@ -11,15 +11,18 @@ QiuSiStatusInfo::QiuSiStatusInfo(const QString &title, const QString &image, QWi
     lbl_image = new QLabel(this);
     lbl_image->setPixmap(QPixmap(image));
     lbl_fileName = new QLabel(title, this);
+    QFont font;
+    font.setPointSize(10);
+    lbl_fileName->setFont(font);
     lbl_fileName->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
 
     QHBoxLayout *lay = new QHBoxLayout;
 
     lay->addWidget(lbl_image);
     lay->addWidget(lbl_fileName);
-    lay->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+    lay->setAlignment(Qt::AlignLeft);
 
-    lay->setContentsMargins(0, 0, 0, 20);
+    lay->setContentsMargins(0, 0, 0, 10);
 
     setLayout(lay);
 }

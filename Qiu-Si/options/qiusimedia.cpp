@@ -12,7 +12,8 @@ QiuSiMedia::QiuSiMedia(QWidget *parent)
     , musicPlayer(new QMediaPlayer(this))
     , musicPlaylist(new QMediaPlaylist(this))
 {
-    InitMedia();
+    musicPlaylist->setPlaybackMode(QMediaPlaylist::Loop);
+
 }
 
 QString QiuSiMedia::mediaPath = "";
@@ -21,7 +22,6 @@ void QiuSiMedia::InputMediaPath(const QString &path)
 {
     mediaPath = path;
     emit changePath(mediaPath);
-    musicPlaylist->setPlaybackMode(QMediaPlaylist::Loop);
     musicPlaylist->addMedia(QUrl::fromLocalFile(mediaPath));
 
     musicPlayer->setPlaylist(musicPlaylist);
@@ -32,9 +32,6 @@ QString QiuSiMedia::OutputMediaPath()
     return mediaPath;
 }
 
-void QiuSiMedia::InitMedia()
-{
-}
 
 qint64 QiuSiMedia::MediaTime(const QString &filePath)
 {

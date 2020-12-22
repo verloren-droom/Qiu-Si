@@ -22,7 +22,6 @@ void QiuSi::InitUi()
     setWindowIcon(QiusiIcon());
 
     InitBar();
-//    setStyleSheet("color: #c02c38");
 
     // Central widget Settings
     InitMainContent();
@@ -42,7 +41,7 @@ void QiuSi::InitMainContent()
 {
     sa_content = new QScrollArea(this);
     mainContent = new QLabel(sa_content);
-    mainContent->setFont(QiusiFont());
+//    mainContent->setFont(QiusiFont());
     setCentralWidget(sa_content);
     QHBoxLayout *lay = new QHBoxLayout;
     lay->addWidget(mainContent);
@@ -94,6 +93,15 @@ void QiuSi::InitBar(bool display)
     currentStatus = statusBar();
     currentStatus->setStyleSheet("QStatusBar::item{border: 0px;}");
     currentStatus->setFixedHeight(20);
+    setStatusBar(currentStatus);
+
+    playTool = new QToolBar(this);
+    playTool->setMovable(false);
+    playTool->setAllowedAreas(Qt::RightToolBarArea);
+    playTool->setStyleSheet("QToolBar::item{border: 0px;}");
+    addToolBar(Qt::RightToolBarArea, playTool);
+    playTool->setFixedWidth(300);
+    playTool->close();
 
     setContextMenuPolicy(Qt::ActionsContextMenu);
 //    setWindowFlags(Qt::CustomizeWindowHint);
@@ -281,31 +289,52 @@ void QiuSi::ShowVideoUi(bool isShow)
         videoMode->close();
         qs_info->close();
         qs_volume->close();
+        setMinimumSize(0, 0);
     }
     else
     {
         qs_info->show();
         videoMode->show();
         qs_volume->show();
+        container->show();
         currentStatus->setFixedHeight(80);
 //        setMinimumSize(900, 675);
-        setFixedSize(900, 675);
+        setMinimumSize(900, 675);
 //        setWindowFlags(/*this->windowFlags()&~Qt::WindowMinMaxButtonsHint | Qt::WindowMinimizeButtonHint*/Qt::WindowMaximizeButtonHint);
+
         currentStatus->addWidget(qs_info);
-        currentStatus->addWidget(videoMode);
+        currentStatus->addWidget(container, 10);
         currentStatus->addPermanentWidget(qs_volume);
-        currentStatus->setContentsMargins(5, 5, 5, 5);
+        currentStatus->setContentsMargins(0, 0, 0, 0);
+        qs_volume->ShowPlaylist();
+        connect(qs_volume->btn_list, &QToolButton::clicked, [=]{
+            if (playTool->isVisible())
+            {
+                qs_volume->playlist->close();
+                playTool->close();
+            }
+            else
+            {
+                playTool->show();
+                qs_volume->playlist->show();
+                playTool->addWidget(qs_volume->playlist);
+            }
+        });
+
+
     }
 }
 
 // Open the music Play mode window function
 void QiuSi::OpenMusicFile()
 {
+    setWindowTitle(path + " - Music Player");
     QFileInfo info(path);
     ShowVideoUi(false);
     QiuSiMedia::instance()->InputMediaPath(path);
     videoMode->RunSliderBtn();
     qs_info->ShowInfo(info.baseName());
+    videoMode->ChangeShowTime();
 }
 
 // Exit the program function
@@ -450,6 +479,13 @@ void QiuSi::MusicPlayUi(const QString &c_path)
     QString title(info.baseName());
 //    qs_media = new QiuSiMedia(this);
     videoMode = new QiuSiVideoMode(this, QiusiTinct());
+    container = new QWidget(this);
+    QHBoxLayout *lay = new QHBoxLayout;
+    lay->addStretch();
+    lay->addWidget(videoMode);
+    lay->addStretch();
+    container->setLayout(lay);
+    container->close();
     qs_volume = new QiuSiVolumeControl(QiusiTinct(), this);
     if (title.isEmpty())
         title = "UnKnown";

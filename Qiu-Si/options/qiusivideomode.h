@@ -4,9 +4,10 @@
 #include <QWidget>
 #include <QMessageBox>
 #include <QFileInfo>
+#include <QLabel>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
-#include <QSpacerItem>
+#include <QTimer>
 
 #include "qiusimedia.h"
 #include "qiusislider.h"
@@ -22,10 +23,14 @@ public:
     QiuSiSlider *qs_slider;
     QiuSiMediaButton *qs_mediaBtn;
 
+    QLabel *lbl_now, *lbl_end;
+
     void RunSliderBtn();
 
+    void ChangeShowTime();
 private:
     void MediaWidgetLayout();
+
 
 signals:
 

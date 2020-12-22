@@ -14,6 +14,7 @@ CONFIG += c++11
 SOURCES += \
     options/qiusimedia.cpp \
     options/qiusimediabutton.cpp \
+    options/qiusiplaylist.cpp \
     options/qiusislider.cpp \
     options/qiusispinbox.cpp \
     options/qiusistatusinfo.cpp \
@@ -32,6 +33,7 @@ SOURCES += \
 HEADERS += \
     options/qiusimedia.h \
     options/qiusimediabutton.h \
+    options/qiusiplaylist.h \
     options/qiusislider.h \
     options/qiusispinbox.h \
     options/qiusistatusinfo.h \

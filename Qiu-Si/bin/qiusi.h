@@ -29,6 +29,7 @@
 #include <QIcon>
 #include <QSpacerItem>
 #include <QFontDatabase>
+#include <QDockWidget>
 
 #include "help/aboutdia.h"
 #include "options/optionsdia.h"
@@ -124,6 +125,8 @@ private:
     QiuSiVideoMode *videoMode;
     QiuSiStatusInfo *qs_info;
     QiuSiVolumeControl *qs_volume;
+    QWidget *container;
+    QToolBar *playTool;
 
     // declaration tool menu
     QMenu *toolsMenu;

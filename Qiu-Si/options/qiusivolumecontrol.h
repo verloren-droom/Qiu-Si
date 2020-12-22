@@ -3,10 +3,13 @@
 
 #include <QWidget>
 #include <QLabel>
+#include <QPushButton>
 #include <QHBoxLayout>
+#include <QToolButton>
 
 #include "qiusislider.h"
 #include "qiusimedia.h"
+#include "qiusiplaylist.h"
 
 class QiuSiVolumeControl : public QWidget
 {
@@ -14,12 +17,14 @@ class QiuSiVolumeControl : public QWidget
 public:
     explicit QiuSiVolumeControl(const QString &color = "#000000", QWidget *parent = nullptr);
 
+    void ShowPlaylist();
+
+    QToolButton *btn_list;
+    QiuSiPlaylist *playlist;
 private:
     QLabel *lbl_volumeImage;
 
     QiuSiSlider *qs_volumeControl;
-
-    QiuSiMedia *qs_media;
 
 public slots:
     void ChangeImage(int s);

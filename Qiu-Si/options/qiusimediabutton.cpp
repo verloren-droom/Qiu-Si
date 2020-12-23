@@ -13,6 +13,7 @@ QiuSiMediaButton::QiuSiMediaButton(QWidget *parent): QWidget(parent)
     btn_play_pause->setIcon(QIcon(":icon/images/icon/Play_256x256.png"));
     btn_play_pause->setStyleSheet(SetBtnStyle() + "QPushButton:pressed{border-image: url(:icon/images/icon/Play_256_click.png);}");
     btn_play_pause->setAttribute(Qt::WA_TranslucentBackground);
+    btn_play_pause->setToolTip("Play");
 
     // Forward button
     btn_forward = new QPushButton(this);
@@ -57,16 +58,27 @@ void QiuSiMediaButton::MediaBtnSet()
     if (QiuSiMedia::instance()->OutputMediaPath().isEmpty())
         return;
     connect(btn_play_pause, &QPushButton::clicked, [=]{
-        switch (QiuSiMedia::instance()->musicPlayer->state()) {
-        case QMediaPlayer::PlayingState:
-            QiuSiMedia::instance()->musicPlayer->pause();
-            btn_play_pause->setIcon(QIcon(":icon/images/icon/Play_256x256.png"));
-            break;
-        case QMediaPlayer::PausedState: case QMediaPlayer::StoppedState:
-            QiuSiMedia::instance()->musicPlayer->play();
-            btn_play_pause->setIcon(QIcon(":icon/images/icon/Pause_256x256.png"));
-            break;
-        }
+        PlayBtnSwitch();
+    });
+    sc_play = new QShortcut(Qt::Key_Space, this);
+    connect(sc_play, &QShortcut::activated, [=]{
+        PlayBtnSwitch();
     });
 
+}
+
+void QiuSiMediaButton::PlayBtnSwitch()
+{
+    switch (QiuSiMedia::instance()->musicPlayer->state()) {
+    case QMediaPlayer::PlayingState:
+        QiuSiMedia::instance()->musicPlayer->pause();
+        btn_play_pause->setIcon(QIcon(":icon/images/icon/Play_256x256.png"));
+        btn_play_pause->setToolTip("Play");
+        break;
+    case QMediaPlayer::PausedState: case QMediaPlayer::StoppedState:
+        QiuSiMedia::instance()->musicPlayer->play();
+        btn_play_pause->setIcon(QIcon(":icon/images/icon/Pause_256x256.png"));
+        btn_play_pause->setToolTip("Pause");
+        break;
+    }
 }

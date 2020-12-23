@@ -108,7 +108,7 @@ void QiuSi::InitBar(bool display)
 }
 
 // QiuSi default font
-QFont QiuSi::QiusiFont()
+inline QFont QiuSi::QiusiFont()
 {
     QFont font;
     int fontIndex = QFontDatabase::addApplicationFont(":font/resources/font/hurry.ttf");
@@ -127,7 +127,7 @@ QFont QiuSi::QiusiFont()
 }
 
 // QiuSi default paltette
-QString QiuSi::QiusiTinct()
+inline QString QiuSi::QiusiTinct()
 {
     return QString("#c02c38");
 }
@@ -183,7 +183,7 @@ void QiuSi::OpenNewWindow()
 }
 
 // New window function
-void QiuSi::NewWindow()
+inline void QiuSi::NewWindow()
 {
     newQiusi = new QiuSi;
     if (!newQiusi->GetFile())
@@ -202,7 +202,7 @@ bool QiuSi::GetFile()
 
     // Gets the open file path
     QFileDialog fileDia(this);
-    path = fileDia.getOpenFileName(this, "Open File...", "D:/", "TXT Files(*.txt);;CPP Files(*.h *.cpp);;Image Files(*.png *.jpg);;Media File(*.mp3)");
+    path = fileDia.getOpenFileName(this, "Open File...", "D:/", "All File(*);;TXT Files(*.txt);;CPP Files(*.h *.cpp);;Image Files(*.png *.jpg);;Media File(*.mp3)");
     setWindowTitle(path);
 //    FilterFile(path);
 
@@ -267,7 +267,7 @@ void QiuSi::OpenTxtFile(QFile *txt)
 }
 
 // Open the image type Settings function
-void QiuSi::OpenImageFile()
+inline void QiuSi::OpenImageFile()
 {
     setWindowTitle(path + " - Picture Viewer");
     QImage img(path);
@@ -320,8 +320,6 @@ void QiuSi::ShowVideoUi(bool isShow)
                 playTool->addWidget(qs_volume->playlist);
             }
         });
-
-
     }
 }
 
@@ -407,7 +405,7 @@ void QiuSi::changeFontSize()
 }
 
 // Add font size function
-void QiuSi::AddSize()
+inline void QiuSi::AddSize()
 {
     QFont font;
     font.setPointSize(++ValueStore::instance()->fontSize);
@@ -416,7 +414,7 @@ void QiuSi::AddSize()
 }
 
 // Reduce font size
-void QiuSi::SubSize()
+inline void QiuSi::SubSize()
 {
     QFont font;
     font.setPointSize(--ValueStore::instance()->fontSize);

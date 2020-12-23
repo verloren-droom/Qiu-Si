@@ -2,11 +2,12 @@
 
 QiuSiVolumeControl::QiuSiVolumeControl(const QString &color, QWidget *parent)
     : QWidget(parent)
-    , lbl_volumeImage(new QLabel(this))
-    , btn_list(new QToolButton(this))
-    , qs_volumeControl(new QiuSiSlider(color, this))
-    , playlist(new QiuSiPlaylist(this))
 {
+    lbl_volumeImage = new QLabel(this);
+    qs_volumeControl = new QiuSiSlider(color, this);
+    btn_list = new QToolButton(this);
+    playlist = new QiuSiPlaylist(this);
+
     setFixedSize(135, 80);
     playlist->close();
     btn_list->setToolTip("open Playlist");

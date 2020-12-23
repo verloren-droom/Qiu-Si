@@ -20,6 +20,7 @@ SOURCES += \
     options/qiusistatusinfo.cpp \
     options/qiusivideomode.cpp \
     options/qiusivolumecontrol.cpp \
+    resources/qiusistyle.cpp \
     test/globaltest.cpp \
     help/aboutdia.cpp \
     options/tinctselect.cpp \
@@ -39,6 +40,7 @@ HEADERS += \
     options/qiusistatusinfo.h \
     options/qiusivideomode.h \
     options/qiusivolumecontrol.h \
+    resources/qiusistyle.h \
     test/globaltest.h \
     help/aboutdia.h \
     options/optionsdia.h \

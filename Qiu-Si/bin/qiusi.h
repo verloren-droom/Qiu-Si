@@ -35,6 +35,7 @@
 #include "options/optionsdia.h"
 #include "resources/ValueStore.h"
 #include "resources/dynamicprogressbar.h"
+#include "resources/qiusistyle.h"
 #include "options/qiusivideomode.h"
 #include "options/qiusivolumecontrol.h"
 #include "options/qiusimedia.h"
